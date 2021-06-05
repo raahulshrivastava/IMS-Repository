@@ -1,0 +1,110 @@
+﻿
+@{
+    ViewBag.Title = "Add Edit Form";
+    Layout = null;
+}
+
+@model IMS.Business.TaxModel
+
+<script src="~/ClientSideUtility/js/jsUtility.js"></script>
+@using (Ajax.BeginForm("AddEditTaxMaster", "TaxMaster", null, new AjaxOptions() { OnSuccess = "InsertUpdateResponse" }))
+{
+    @Html.HiddenFor(a => a.Id)
+
+    <div class="box-body">
+
+        <div class="col-md-6">
+            <label>Tax Name <span class="astrrick">*</span></label>
+            @Html.TextBoxFor(a => a.TaxName, new { @class = "form-control", placeholder = "Enter Tax Name", required = "required" })
+            @Html.ValidationMessageFor(a => a.TaxName)
+        </div>
+
+        <div class="col-md-6">
+            <label>Applied On <span class="astrrick">*</span></label>
+            @Html.DropDownListFor(a => a.AppliedOn, new SelectList(new List<SelectListItem>() { new SelectListItem { Text = "Product", Value = "1" }, new SelectListItem { Text = "Service", Value = "2" } }, "Value", "Text"), "-Select-", new { @class = "form-control", placeholder = "Enter Tax Name", required = "required" })
+
+        </div>
+
+
+        <div class="col-md-6">
+            <label>SGST Value <span class="astrrick">*</span></label>
+            @Html.TextBoxFor(a => a.SGSTValue, new { @class = "form-control onlydecimal", required = "required" })
+
+        </div>
+        <div class="col-md-6">
+            <label>CGST Value <span class="astrrick">*</span></label>
+            @Html.TextBoxFor(a => a.CGSTValue, new { @id = "CGSTValue", @class = "form-control onlydecimal", required = "required" })
+
+        </div>
+
+        <div class="col-md-6">
+            <label>Total Value <span class="astrrick">*</span></label>
+            @Html.TextBoxFor(a => a.TotalValue, new { @id = "TotalValue", @class = "form-control onlydecimal", placeholder = "Enter Total Value", required = "required", disabled = "disabled" })
+
+        </div>
+
+        <div class="col-md-12">
+            <label>Description</label>
+
+            @Html.TextAreaFor(a => a.Description, new { @class = "form-control", placeholder = "Enter Description" })
+
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="checkbox icheck">
+                <label>
+                    @Html.CheckBoxFor(a => a.CheckIsActive) Is Active
+                </label>
+            </div>
+        </div>
+    </div>
+            <!-- /.box-body -->
+    <div class="box-footer">
+        <button type="submit" class="btn btn-primary" id="btnSubmit">Submit</button>
+    </div>
+
+}
+
+
+<script type="text/javascript">
+    $("#CGSTValue").change(function () {
+        var cgst = $("#CGSTValue").val();
+        var sgst = $("#SGSTValue").val();
+        var total = '';
+        if (sgst != null && sgst != '') {
+            total = parseFloat(sgst) + parseFloat(cgst);
+            $("#TotalValue").val(total);
+        }
+
+    });
+
+    $("#SGSTValue").change(function () {
+        var cgst = $("#CGSTValue").val();
+        var sgst = $("#SGSTValue").val();
+        var total = '';
+        if (cgst != null && cgst != '') {
+            total = parseFloat(sgst) + parseFloat(cgst);
+            $("#TotalValue").val(total);
+        }
+
+    });
+
+    $("#btnSubmit").click(function () {
+        debugger;
+        var cgst = $("#CGSTValue").val();
+        if (cgst != "" && cgst != null) {
+            if (parseFloat(cgst) > 100) {
+                alert("CGST value cannot be greater then 100.");
+                return false;
+            }
+        }
+        var sgst = $("#SGSTValue").val();
+        if (sgst != "" && sgst != null) {
+            if (parseFloat(sgst) > 100) {
+                alert("SGST value cannot be greater then 100.");
+                return false;
+            }
+        }
+    });
+</script>

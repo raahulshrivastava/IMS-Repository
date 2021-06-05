@@ -1,0 +1,39 @@
+﻿@{
+    Layout = null;
+    int index = 0;
+}
+
+@model IEnumerable<IMS.Models.Products.ProductMasterModel>
+<script src="~/Scripts/bootbox.min.js"></script>
+<div class="table table-responsive">
+    <table id="example" class="table table-bordered table-striped table-responsive">
+        <thead>
+            <tr>
+                <td>S.No.</td>
+                <td>Product Name</td>
+                <td>Product Detail</td>
+                <td>MRP</td>
+                <td>Tax</td>
+                <td>Rack No</td>
+                <td>Available Quantity</td>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var i in Model)
+        {
+            index++;
+                <tr>
+                    <td>@index</td>
+                    <td>@i.ProductName</td>
+                    <td>@i.BrandDes (@i.CategoryDes, @i.UnitDes) </td>
+                    <td>@i.SalesPriceMRP</td>
+                    <td>@i.TaxDes</td>
+                    <td>@i.RackNo</td>
+                    <td>@i.AvlQty</td>
+                </tr>
+        }
+
+        </tbody>
+    </table>
+</div>

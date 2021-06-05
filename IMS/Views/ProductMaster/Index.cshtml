@@ -1,0 +1,129 @@
+﻿
+@{
+    ViewBag.Title = "Product";
+}
+@model IMS.Models.Products.ProductSearchModel
+@using IMS.Utilities;
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Product Master
+    </h1>
+    <div class="pull-right">
+        <button type="button" class="btn bg-purple" data-toggle="modal" data-target="#pdf-report">
+            <i class="fa fa-file-pdf-o"></i>  Product Report
+        </button>
+
+        @*<a href="@Url.Action("ProductReport", "ProductMaster")" target="_blank" class="btn bg-purple " id="btn-pdf-report"><i class="fa fa-file-pdf-o"></i>  Product Report</a>*@
+        <a href="@Url.Action("ProductMaster", "ProductMaster")" target="_blank" class="btn bg-blue " id="btnAdd"><i class="fa fa-plus"></i>  Add</a>
+
+
+
+        @*<button type="button" onclick="exported('@((int)Enums.Modules.ProductMaster)')" class="btn btn-success">
+                <i class="fa fa-download"></i>
+                Export Excel
+            </button>
+            <button type="button" class="btn bg-olive" data-toggle="modal" data-target="#modal-default">
+                <i class="fa fa-upload"></i>
+                Import Excel
+            </button>*@
+    </div>
+
+</div>
+<br />
+
+<!-- Modal -->
+<div class="modal fade" id="pdf-report" tabindex="-1" role="dialog" aria-labelledby="pdf-report" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLongTitle">View Report</h3>
+                <button type="button" class="close  btn" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Product</label>
+                    <div class="col-sm-10">
+                        @Html.DropDownListFor(a => a.ProductId, Model.ProductList, "Please select one.", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Brand</label>
+                    <div class="col-sm-10">
+                        @Html.DropDownListFor(a => a.BrandId, Model.BrandList, "Please select one.", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Category</label>
+                    <div class="col-sm-10">
+                        @Html.DropDownListFor(a => a.CategoryId, Model.CategoryList, "Please select one.", new { @class = "form-control" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-purple" id="viewReport">View</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box box-success">
+    <div class="box-body" id="ClassListing">
+        @{
+            Html.RenderAction("SearchProductMaster", "ProductMaster");
+        }
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () { $('#example').DataTable(); });
+       function InsertUpdateResponse(response) {
+        var jsonData = $.parseJSON(response);
+        var mess = jsonData.Message;
+        var messType = jsonData.MessageType;
+        if (messType == 1) { $.notify({ message: jsonData.Message }, { type: 'success' }); }
+        else { $.notify({ message: jsonData.Message }, { type: 'warning' }); }
+        var url = '@Url.Action("SearchProductMaster", "ProductMaster")';
+        $("#ClassListing").load(url);
+    }
+
+    $("#viewReport").click(function () {
+        var productId = $("#ProductId").val() || "";
+        var categoryId = $("#CategoryId").val() || "";
+        var brandId = $("#BrandId").val() || "";
+        var productName = $("#ProductId option:selected").text()||"";
+        var categoryName = $("#CategoryId option:selected").text()||"";
+        var brandName = $("#BrandId option:selected").text()||"";
+        var url = "/ProductMaster/ProductReport?productId=" + productId + "&categoryId=" + categoryId + "&brandId=" + brandId + "&productName=" + productName + "&brandName=" + brandName + "&categoryName=" + categoryName;
+        window.open(url,'_blank');
+    });
+</script>
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        @using (Html.BeginForm("ImportExcel", "ImportExportDocument", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Import Excel</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Please select file to import </p>   <input type="file" name="file" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        }
+
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

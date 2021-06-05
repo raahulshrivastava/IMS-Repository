@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewBag.Title = "Add Edit Form";
+    Layout = null;
+}
+@using IMS.Business
+@model IMS.DataContext.PrefixMaster
+
+<section class="content">
+    @using (Ajax.BeginForm("AddEditPrefixMaster", "PrefixMaster", null, new AjaxOptions() { OnSuccess = "InsertUpdateResponse" }))
+    {
+        @Html.HiddenFor(a => a.Id)
+        <div role="form">
+            <div class="box-body">
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <label>Page Name <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.PageNumber, new { @class = "form-control", placeholder = "Enter Prefix Name", required = "required" })
+                        
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Prefix Name <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.PrefixName, new { @class = "form-control", placeholder = "Enter Prefix Name", required = "required" })
+                        
+                    </div>
+
+
+                    <div class="col-md-12">
+                        <label>Starting From</label>
+                        @Html.TextBoxFor(a => a.StartingFrom, new { @class = "form-control", required = "required" })
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <label>Description</label>
+
+                        @Html.TextAreaFor(a => a.Description, new { @class = "form-control", placeholder = "Enter Description" })
+
+                    </div>
+
+
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    }
+
+
+</section>

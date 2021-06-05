@@ -1,0 +1,446 @@
+﻿@model IMS.Business.StockIn
+@using IMS.Utilities;
+@{
+    ViewBag.Title = "Product Master";
+}
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.bootstrap.js"></script>
+<link href="~/AdminLTE-2.4.3/dist/css/alt/AdminLTE-select2.min.css" rel="stylesheet" />
+<link href="~/AdminLTE-2.4.3/bower_components/select2/dist/css/select2.min.css" rel="stylesheet" />
+<script src="~/AdminLTE-2.4.3/bower_components/select2/dist/js/select2.full.min.js"></script>
+
+<div class="box box-success">
+
+    <div class="box-header with-border">
+        <h3 class="box-title">Add New Stock In </h3>
+        <div class="pull-right">
+            @Html.ActionLink("Back To List", "Index", "StockIn", new { @class = "btn btn-primary btn-sm", @id = "backToList" })
+            @*<a class="btn btn-primary btn-sm" href="@Url.Action("Index","StockIn")" id="backToList">Back To List</a>*@
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("AddEditStockInMaster", "StockIn", FormMethod.Post))
+{
+    @Html.HiddenFor(a => a.StockInDetailId)
+    @Html.HiddenFor(a => a.StockInHeaderId)
+    @Html.HiddenFor(a => a.hidForward)
+    @Html.HiddenFor(a => a.UnitId)
+
+    <div class="box box-success">
+        <div class="box-body irs-with-grid">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="cm-strong">Stock In Date <span class="astrrick">*</span></label>
+                    @{
+                        var dtStockInDate = Model.StockInHeaderId > 0 ? Model.StockInDate.Value.ToString("dd-MMM-yyyy") : DateTime.Now.ToString("dd-MMM-yyyy");
+                    }
+                    <input type="text" value="@dtStockInDate" name="StockInDate" id="StockInDate" class="form-control datepicker" required="required" readonly="readonly" />
+                    @*@Html.TextBoxFor(a => a.StockInDate, dt, new { @class = "form-control datepicker", id = "StockInDate", required = "required", @readonly = "readonly" })*@
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Stock In Number <span class="astrrick">*</span></label>
+                    @if (Model.StockInHeaderId > 0)
+                    {
+                        <br />
+                        <label>@Model.StockInNumber</label>
+                    }
+                    else
+                    {
+                        <br />
+                        <label class="cm-strong">N/A</label>
+                    }
+
+                </div>
+
+
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="box">
+        <div class="box-body irs-with-grid">
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="strong">Category </label>
+                    <div>@Html.DropDownListFor(a => a.CategoryId, Model.CategoryDdl, "-Select-", new { @class = "select2", @style = "width: 100%;", @id = "CategoryId" })</div>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="strong">Product</label>
+                    <div class="ddlled">@Html.DropDownListFor(a => a.ProductId, new SelectList(new List<SelectListItem>() { new SelectListItem { Value = "", Text = "" } }, "Value", "Text"), "-Select-", new { @style = "width: 100%;", @id = "ProductId", @class = "select2" })</div>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="strong">Quantity</label>
+                    <div class="ddlled">@Html.TextBoxFor(a => a.Quantity, new { @id = "Quantity", @class = "form-control" })</div>
+                </div>
+
+                @if (UserSession.StoreType == 0)
+                {
+                    <div class="col-md-3">
+                        <div><label class="strong">Batch No</label></div>
+                        <div class="ddlled">@Html.TextBoxFor(a => a.BatchNo, new { @id = "BatchNo", @class = "form-control" })</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div><label class="strong">Expiry Date</label></div>
+                        @{
+                            var dtExpiryDate = (Model.StockInHeaderId > 0 && Model.ExpiryDate != null) ? Model.ExpiryDate.Value.ToString("dd-MMM-yyyy") : "";
+                        }
+                        @*<input type="text" value="@dtExpiryDate" name="ExpiryDate" id="ExpiryDate" class="form-control datepicker" required="required" />*@
+
+                        <div class="ddlled">
+                            @Html.TextBoxFor(a => a.ExpiryDate, new { @id = "ExpiryDate", @class = "form-control datepicker" })
+                            @*<input type="text" value="@dtExpiryDate" name="ExpiryDate" id="ExpiryDate" class="form-control datepicker" required="required" />*@
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <br />
+            <div class="row" id="divUnitDetail">
+                <div class="col-md-4">
+                    <b>
+                        Unit :
+                    </b>
+                    <label class="Normal" id="lblUnit">@Model.UnitTxt</label>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12 pull-right text-right">
+                    <a class="btn btn-sm btn-success" id="btmAddToGrid"><i class="fa fa-plus"></i>  Add</a>
+                </div>
+
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12" id="tblstockin"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Description</label>
+                    @Html.TextAreaFor(a => a.Description, new { @class = "form-control" })
+                </div>
+            </div>
+       </div>
+    </div>
+
+
+    <div class="clearfix"><br /></div>
+    <div class="box box-footer">
+        <div class="pull-right">
+            <button class="btn btn-success" type="submit" id="btnSubmit">Submit</button>
+            <button class="btn btn-danger" type="reset">Reset</button>
+        </div>
+    </div>
+
+}
+
+
+<script type="text/javascript">
+    $("#btnSubmit").click(function () {
+        var date = $("#StockInDate").val();
+        if (date == "" || date == null) {
+            $.notify({ message: "Please enter stock in date." }, { type: 'warning' });
+            return false;
+        }
+    });
+
+    $("#CategoryId").change(function () {
+        var catid = $(this).val();
+        BindProductDdl(catid);
+    });
+
+    function BindProductDdl(catid) {
+        $("#ProductId").empty();
+        $("#ProductId").append('<option value="">--Select--</option>');
+        if (catid != "" || catid != 0 || catid != null) {
+            $.ajax({
+                type: 'POST',
+                async: false,
+                type: 'POST',
+                datatype: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: catid }),
+                url: '@Url.Action("BindProductByCatId", "StockIn")',
+                success: function (blocks) {
+                    $("#ProductId").empty();
+                    $("#ProductId").append('<option value="">--Select--</option>');
+                    $.each(blocks, function (i, block) {
+                        $("#ProductId").append('<option value="' + block.Value + '">' +
+                             block.Text + '</option>');
+                    });
+
+                },
+                error: function (ex) {
+                }
+            });
+        }
+    }
+    $("#ProductId").change(function () {
+
+        $("#lblUnit").text("");
+        $("#divUnitDetail").show();
+        var productid = $(this).val();
+        if (productid != "" || productid != 0 || productid != null) {
+            $.ajax({
+                type: 'POST',
+                async: false,
+                type: 'POST',
+                datatype: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: productid }),
+                url: '@Url.Action("GetUnitByProduct", "StockIn")',
+                success: function (blocks) {
+                    var unit = blocks.split("!");
+                    $("#UnitId").val(unit[0]);
+                    $("#lblUnit").text(unit[1]);
+                },
+                error: function (ex) {
+                }
+            });
+        }
+
+    });
+
+
+    //=================================Add========================
+    $(document).ready(function () {
+        //$("#Unit").attr("disabled", "disabled");
+        $("#divUnitDetail").hide();
+        $('.select2').select2();
+        //$(".datepicker").datepicker("option", "dateFormat", "dd-M-yy");
+        //$(".datepicker").datepicker('setDate', 'today');
+        //$(".datepicker").datepicker({
+        //    format: "dd-M-yyyy",
+        //    showOtherMonths: false,
+        //    selectOtherMonths: false,
+        //    showButtonPanel: false,
+        //    changeMonth: true,
+        //    changeYear: true,
+        //    gotoCurrent: true,
+        //    autoclose: true,
+        //});
+        $(function () {
+            $('.datepicker').datepicker({
+                format: 'dd-M-yyyy',
+                autoclose: true
+            });
+        });
+
+        ShowHeader();
+        var status = '@Model.Status';
+        var returnMessage = '@Model.ReturnMessage';
+
+        if (status == 1) {
+            //alert(returnMessage);
+            window.location.href = '@Url.Action("Index", "StockIn")';
+        }
+        else if (status == 0) { }
+        else { alert(returnMessage); }
+
+    });
+
+    $("#btmAddToGrid").click(function () {
+        var isCheck = true;
+
+        var ddlProductId = $("#ProductId").val();
+        var ddlProductTxt = $("#ProductId option:selected").text();
+        var ddlCategoryId = $("#CategoryId").val();
+        var ddlCategoryTxt = $("#CategoryId option:selected").text();
+        var UnitTxt = $("#lblUnit").text();
+        var Quantity = $("#Quantity").val();
+
+        if (ddlCategoryId == 0 || ddlCategoryId == null || ddlCategoryId == "") {
+            $.notify({ message: "Please select category." }, { type: 'warning' });
+            return false;
+        }
+
+        if (ddlProductId == 0 || ddlProductId == null || ddlProductId == "") {
+            $.notify({ message: "Please select product." }, { type: 'warning' });
+            return false;
+        }
+
+        if (UnitTxt == 0 || UnitTxt == null || UnitTxt == "") {
+            $.notify({ message: "Please select unit." }, { type: 'warning' });
+            return false;
+        }
+
+        if (Quantity == 0 || Quantity == null || Quantity == "") {
+            $.notify({ message: "Please select quantity." }, { type: 'warning' });
+            return false;
+        }
+
+
+        if ('@UserSession.StoreType' == 0) {
+            var batchNo = $("#BatchNo").val();
+            var expityDate = $("#ExpiryDate").val();
+            if (batchNo == "" || batchNo == null) {
+                $.notify({ message: "Please enter batch no." }, { type: 'warning' });
+                return false;
+            }
+            if (expityDate == "" || expityDate == null) {
+                $.notify({ message: "Please enter expiry date." }, { type: 'warning' });
+                return false;
+            }
+        }
+
+
+
+
+        $('#tblstockin tr').each(function (index, elem) {
+            var trCatTxt = $(this).children().eq(1).text();
+            var trProTxt = $(this).children().eq(3).text();
+            var trUnitTxt = $(this).children().eq(5).text();
+            var trQtyTxt = $(this).children().eq(6).text();
+            if (trCatTxt == ddlCategoryTxt && trProTxt == ddlProductTxt && trUnitTxt == UnitTxt && trQtyTxt == Quantity) {
+                $.notify({ message: "This detail has already entered!" }, { type: 'warning' });
+                isCheck = false;
+            }
+        });
+
+        if (isCheck == false) { return false; }
+
+        var fAdd = ddlCategoryTxt + "!";
+        fAdd += ddlCategoryId + "!";
+        fAdd += ddlProductTxt + "!";
+        fAdd += ddlProductId + "!";
+        fAdd += UnitTxt + "!";
+        fAdd += Quantity + "!";
+
+        if ('@UserSession.StoreType' == 0) {
+            fAdd += batchNo + "!";
+            fAdd += expityDate + "!";
+        }
+        else {
+            fAdd += "" + "!" + "" + "!";
+        }
+
+        fAdd += "$"
+
+        $("#hidForward").val($("#hidForward").val() + fAdd)
+        ShowHeader();
+        $("#ProductId").select2('val', '0');
+        $("#CategoryId").select2('val', '0');
+        $("#lblUnit").text("");
+        $("#Quantity").val("");
+        $("#BatchNo").val("");
+        $("#ExpiryDate").val("");
+        $("#divUnitDetail").hide();
+    });
+
+    //=================================View========================
+    function ShowHeader() {
+        if ($("#hidForward").val() != '') {
+            var headarr = '';
+            var headerDtl = '';
+            content = '';
+            content += "<table class='table table-bordered table-condensed table-striped table-primary table-vertical-center checkboxs js-table-sortable ui-sortable'>"
+            content += "<thead><tr>"
+            content += "<th style='text-align:Center' width='1%'><B>S.No.</B></th>"
+            content += "<th style='text-align:Center' width='15%'><B>Category</B></th>"
+            content += "<th style='text-align:Center;display:none;' width='15%'><B>Category Id</B></th>"
+            content += "<th style='text-align:Center' width='15%'><B>Product </B></th>"
+            content += "<th style='text-align:Center;display:none;' width='15%'><B>Product Id</B></th>"
+            content += "<th style='text-align:Center;' width='15%'><B>Unit</B></th>"
+            content += "<th style='text-align:Center;' width='15%'><B>Quantity</B></th>"
+
+            if ('@UserSession.StoreType' == 0) {
+                content += "<th style='text-align:Center;' width='15%'><B>Batch No</B></th>"
+                content += "<th style='text-align:Center;' width='15%'><B>Expity Date</B></th>"
+            }
+            content += "<th style='text-align:Center' width='10%'><B>Actions</B></th>"
+            content += "</tr></thead><tbody>"
+            headarr = $('#hidForward').val().split("$");
+            for (k = 0; k < headarr.length - 1; k++) {
+                headerDtl = headarr[k].split('!')
+                content += "<tr class='targetfields' style='background-color:white;border-style:none'>"
+                content += "<td align='left'>" + eval(k + 1) + "</td>"
+                content += "<td style='text-align:Center;'>" + headerDtl[0] + "</td>"
+                content += "<td style='display:none; text-align:Center;'>" + headerDtl[1] + "</td>"
+                content += "<td style='text-align:Center;'>" + headerDtl[2] + "</td>"
+                content += "<td style='display:none; text-align:Center;'>" + headerDtl[3] + "</td>"
+                content += "<td style='text-align:Center;'>" + headerDtl[4] + "</td>"
+                content += "<td style='text-align:Center;'>" + headerDtl[5] + "</td>"
+
+                if ('@UserSession.StoreType' == 0) {
+                    content += "<td style='text-align:Center;'>" + headerDtl[6] + "</td>"
+                    content += "<td style='text-align:Center;'>" + headerDtl[7] + "</td>"
+                }
+
+                content += "<td style='text-align:center' width='10%'>"
+                        + "<a class='btn btn-sm btn-success'id='btnGedit' onclick ='window.EEdit(" + k + ")'> "
+                        + "<i class='fa fa-pencil' align='top'></i></a>&nbsp;<a class='btn btn-sm btn-danger' id='btnGdelete' onclick ='window.DDEL(" + k + ")'><i class='fa fa-times'  align='top' ></i></a> </td>"
+                content += "</tr>"
+            }
+            content += " </tbody></table>"
+            $("#tblstockin").html(content);
+        }
+        else { $("#tblstockin").html(''); }
+    }
+
+
+    //=================================Edit========================
+    function EEdit(j) {
+        debugger;
+        var ct = $("#CategoryId").val();
+        var pt = $("#ProductId").val();
+        var ut = $("#lblUnit").text();
+        var qty = $("#Quantity").val();
+
+        var i = 0;
+
+        if (ct != "") { i++; }
+        if (pt != "") { i++; }
+        if (ut != "") { i++; }
+        if (qty != "" && qty!="0") { i++; }
+
+        if (i > 0) { return false; }
+
+        var finalVal = '';
+        var editVal
+        var arr_val = $("#hidForward").val().split("$")
+        for (l = 0; l < arr_val.length - 1; l++) {
+            if (l != j) { finalVal = finalVal + arr_val[l] + "$"; }
+            else { editVal = arr_val[l]; }
+        }
+
+        $("#hidForward").val(finalVal);
+        finalVal = editVal.split("!");
+        $("#CategoryId").val(finalVal[1]);
+        $("#lblUnit").text(finalVal[4]);
+        $("#Quantity").val(finalVal[5]);
+        BindProductDdl(finalVal[1]);
+        $("#ProductId").val(finalVal[3]);
+        $("#BatchNo").val(finalVal[6]);
+        $("#ExpiryDate").val(finalVal[7]);
+        ShowHeader();
+    }
+
+    //=================================Delete==========================================
+
+    function DDEL(j) {
+
+        var deletVal = "";
+        if (confirm("Are You Sure Want To Delete This Record?")) {
+            var finalVal = "";
+            arr_val = $("#hidForward").val().split("$");
+            for (l = 0; l < arr_val.length - 1; l++) {
+                if (l != j) {
+                    finalVal = finalVal + arr_val[l] + "$";
+                }
+            }
+            $("#hidForward").val(finalVal);
+
+        }
+        ShowHeader();
+    }
+
+
+
+</script>

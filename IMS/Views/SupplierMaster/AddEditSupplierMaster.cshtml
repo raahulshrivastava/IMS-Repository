@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewBag.Title = "Add Edit Form";
+    Layout = null;
+}
+
+
+@model IMS.Business.SupplierModel
+
+<script src="~/ClientSideUtility/js/jsUtility.js"></script>
+<section class="content">
+    @using (Ajax.BeginForm("AddEditSupplierMaster", "SupplierMaster", null, new AjaxOptions() { OnSuccess = "InsertUpdateResponse" }))
+    {
+        @Html.HiddenFor(a => a.Id)
+        <div role="form">
+            <div class="box-body">
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <label>Supplier Name <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.SupplierName, new { @class = "form-control onlyalphanumeric", placeholder = "Enter Supplier Name", required = "required" })
+                        @Html.ValidationMessageFor(a => a.SupplierName)
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Contact Person <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.ContactPerson, new { @class = "form-control onlyalphanumeric", placeholder = "Enter Contact Person Name", required = "required" })
+                        @Html.ValidationMessageFor(a => a.SupplierName)
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Contact Number <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.ContactNumber, new { @class = "form-control onlynumber", placeholder = "Enter Contact Number", required = "required" })
+                        @Html.ValidationMessageFor(a => a.ContactNumber)
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>City </label>
+                        @Html.TextBoxFor(a => a.City, new { @class = "form-control onlyalphanumeric", placeholder = "Enter Contact Number", required = "required" })
+                        
+                    </div>
+                    <div class="col-md-8">
+                        <label>Address</label>
+                        @*onlyalphanumeric*@
+                        @Html.TextBoxFor(a => a.Address, new { @class = "form-control ", placeholder = "Enter Address", required = "required" })
+
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Email Id</label>
+                        @Html.TextBoxFor(a => a.Email, new { @class = "form-control", placeholder = "Enter Email Id", type = "email" })
+
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Opening Balance <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.OpeningBalance, new { @class = "form-control onlydecimal", required= "required" })
+
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>GST No. <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.GSTNumber, new { @class = "form-control onlyalphanumeric", required = "required" })
+
+                    </div>
+     
+
+                    <div class="col-md-4">
+                        <label>PAN No.</label>
+                        @Html.TextBoxFor(a => a.PANNumber, new { @class = "form-control onlyalphanumeric" })
+
+                    </div>
+
+
+                    <div class="col-md-12">
+                        <label>Description</label>
+
+                        @Html.TextAreaFor(a => a.Description, new { @class = "form-control", placeholder = "Enter Description" })
+
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <div class="checkbox icheck icheckbox_flat-green">
+                            <label>
+                                @Html.CheckBoxFor(a => a.CheckIsActive) Is Active
+
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    }
+
+
+</section>

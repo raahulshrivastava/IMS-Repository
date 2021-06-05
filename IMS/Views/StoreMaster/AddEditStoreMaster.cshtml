@@ -1,0 +1,150 @@
+﻿
+@{
+    ViewBag.Title = "Add Edit Form";
+    Layout = null;
+}
+@using IMS.Business
+@model IMS.DataContext.StoreMaster
+
+<script src="~/ClientSideUtility/js/jsUtility.js"></script>
+
+@using (Ajax.BeginForm("AddEditStoreMaster", "StoreMaster", null, new AjaxOptions() { OnSuccess = "InsertUpdate" }))
+{
+    @Html.HiddenFor(a => a.Id)
+
+    <div class="box-body">
+        <div class="col-md-4">
+            <label>Store Name <span class="astrrick">*</span></label>
+            @Html.TextBoxFor(a => a.StoreName, new { @class = "form-control onlyalphanumeric", required = "required" })
+
+        </div>
+        <div class="col-md-4">
+            <label>Owner Name <span class="astrrick">*</span></label>
+
+            @Html.TextBoxFor(a => a.OwnerName, new { @class = "form-control onlyalphanumeric", required = "required" })
+
+        </div>
+        <div class="col-md-4">
+            <label>Address<span class="astrrick">*</span></label>
+
+            @Html.TextBoxFor(a => a.Address, new { @class = "form-control", required = "required" })
+
+        </div>
+
+        <div class="col-md-4">
+            <label>City <span class="astrrick">*</span></label>
+
+            @Html.TextBoxFor(a => a.City, new { @class = "form-control onlyalphanumeric", required = "required" })
+
+        </div>
+
+        <div class="col-md-4">
+            <label>State <span class="astrrick">*</span></label>
+
+            @Html.TextBoxFor(a => a.State, new { @class = "form-control onlyalphanumeric", required = "required" })
+
+        </div>
+
+        <div class="col-md-4">
+            <label>Email Id <span class="astrrick">*</span></label>
+         
+            @Html.TextBoxFor(a => a.EmailId1, new { @class = "form-control", required = "required", type = "email" })
+
+        </div>
+        <div class="col-md-4">
+            <label>Alternate Email Id <span class="astrrick">*</span></label>
+
+            @Html.TextBoxFor(a => a.EmailId2, new { @class = "form-control" , type = "email" })
+
+        </div>
+        <div class="col-md-4">
+            <label>Contact No. <span class="astrrick">*</span></label>
+
+            @Html.TextBoxFor(a => a.ContactNumber1, new { @class = "form-control onlynumber", required = "required" })
+
+        </div>
+        <div class="col-md-4">
+            <label>Alternate Contact No. </label>
+
+            @Html.TextBoxFor(a => a.ContactNumber2, new { @class = "form-control onlynumber" })
+
+        </div>
+        <div class="col-md-4">
+            <label>GSTIN No. </label>
+
+            @Html.TextBoxFor(a => a.GSTINNumber, new { @class = "form-control onlyalphanumeric" })
+
+        </div>
+
+
+        <div class="col-md-4">
+            <label>DL Number No. </label>
+
+            @Html.TextBoxFor(a => a.DLNumber, new { @class = "form-control onlyalphanumeric" })
+
+        </div>
+
+
+
+        <div class="col-md-4">
+            <label>TIN No. </label>
+
+            @Html.TextBoxFor(a => a.TINNumber, new { @class = "form-control", required = "required" })
+
+        </div>
+
+
+        <div class="col-md-4">
+            <label>ST No. </label>
+
+            @Html.TextBoxFor(a => a.STNumber, new { @class = "form-control onlyalphanumeric" })
+
+        </div>
+        <div class="col-md-4">
+            <label>Website </label>
+
+            @Html.TextBoxFor(a => a.Website, new { @class = "form-control" })
+
+        </div>
+        <div class="col-md-4">
+            <label class="strong">Store Type</label>
+            <div class="ddlled">
+                @{
+                    var item = new List<SelectListItem>() {
+                                        new SelectListItem() { Text = "Medical", Value = "0" },
+                                        new SelectListItem() { Text = "Other", Value = "1" }
+                                        };
+                    SelectList lst = new SelectList(item, "Value", "Text");
+                }
+                @Html.DropDownListFor(a => a.StoreType, lst, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label class="strong">Payment Type</label>
+            <div class="ddlled">
+                @{
+                    var item1 = new List<SelectListItem>() {
+                                        new SelectListItem() { Text = "Over All", Value = "0" },
+                                        new SelectListItem() { Text = "Invoice Wise", Value = "1" }
+                                        };
+                    SelectList lst1 = new SelectList(item1, "Value", "Text");
+                }
+                @Html.DropDownListFor(a => a.PaymentType, lst1, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <label>Description</label>
+            @Html.TextAreaFor(a => a.Description, new { @class = "form-control", placeholder = "Enter Description" })
+
+        </div>
+
+    </div>
+            <!-- /.box-body -->
+    <div class="box-footer">
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+    </div>
+
+}

@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewBag.Title = "Add Edit Form";
+    Layout = null;
+}
+
+@model IMS.Business.UnitModel
+
+<section class="content">
+    @using (Ajax.BeginForm("AddEditUnitMaster", "UnitMaster", null, new AjaxOptions() { OnSuccess = "InsertUpdateResponse" }))
+    {
+        @Html.HiddenFor(a => a.Id)
+        <div role="form">
+            <div class="box-body">
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <label>Unit Name <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.UnitName, new { @class = "form-control", placeholder = "Enter Unit Name", required = "required" })
+                        @Html.ValidationMessageFor(a => a.UnitName)
+                    </div>
+
+
+                    <div class="col-md-6">
+                        @{
+                            bool req = false;
+                            if (Model.DdlConversionUnit.Count() > 0 && Model.DdlConversionUnit != null)
+                            {
+                                req =true;
+                            }
+                        }
+
+
+                        @if (req)
+                        {
+                            <label>Conversion Unit <span class="astrrick">*</span> </label>
+                            @Html.DropDownListFor(a => a.ConversionUnit, Model.DdlConversionUnit, "-Select-", new { @class = "form-control", required="required" })
+                        }
+                        else
+                        {
+                            <label>Conversion Unit</label>
+                            @Html.DropDownListFor(a => a.ConversionUnit, Model.DdlConversionUnit, "-Select-", new { @class = "form-control" })
+                        }
+                        
+
+                    </div>
+                    <div class="col-md-6">
+                        <label>Conversion Quantity</label>
+                        @Html.TextBoxFor(a => a.ConversionQuantity, new { @class = "form-control", required = "required" })
+
+                    </div>
+                    <div class="col-md-12">
+                        <label>Description</label>
+
+                        @Html.TextAreaFor(a => a.Description, new { @class = "form-control", placeholder = "Enter Description", required = "required" })
+
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="checkbox icheck icheckbox_flat-green">
+                            <label>
+                                @Html.CheckBoxFor(a => a.CheckIsActive) Is Active
+
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+                            }
+
+
+</section>

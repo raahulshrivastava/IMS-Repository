@@ -1,0 +1,124 @@
+﻿
+@{
+    Layout = null;
+}
+
+@model IEnumerable<IMS.DataContext.StoreMaster>
+<script src="~/Scripts/bootbox.min.js"></script>
+
+<div class="table table-responsive">
+    <table id="example" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>S.No.</th>
+
+                <th class="col-md-1">Store Name</th>
+                <th class="col-md-1">Owner Name</th>
+                <th class="col-md-2">Address</th>
+                <th class="col-md-1">State</th>
+                <th class="col-md-1">City</th>
+                <th class="col-md-1">GSTIN No.</th>
+                <th class="col-md-1">DL No.</th>
+                <th class="col-md-1">TIN No.</th>
+                <th class="col-md-1">ST No.</th>
+                <th class="col-md-1">Contact No.</th>
+                @*<th class="col-md-1">Alternate Contact No.</th>*@
+                <th class="col-md-2">Email Id</th>
+                @*<th class="col-md-2">Alternate Email Id</th>*@
+                <th class="col-md-2">Website</th>
+                @*<th class="col-md-3">Description</th>*@
+                <th class="col-md-3">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int index = 0;
+            }
+            @if (Model.Count() > 0)
+            {
+                foreach (var i in Model)
+                {
+                    index++;
+                    <tr>
+                        <td>@index</td>
+
+                        <td>@i.StoreName</td>
+                        <td>@i.OwnerName</td>
+                        <td>@i.Address</td>
+                        <td>@i.State</td>
+                        <td>@i.City</td>
+                        <td>@i.GSTINNumber</td>
+                        <td>@i.DLNumber</td>
+                        <td>@i.TINNumber</td>
+                        <td>@i.STNumber</td>
+                        <td>@i.ContactNumber1</td>
+                        @*<td>@i.ContactNumber2</td>*@
+                        <td>@i.EmailId1</td>
+                        @*<td>@i.EmailId2</td>*@
+                        <td>@i.Website</td>
+                        @*<td>@i.Description</td>*@
+                        <td class="text-center">
+                            <div>
+                                <a class="btn btn-primary btn-xs" id="btnEdit" data-toggle="modal" data-target="#m-modal"  onclick="AddEdit(@i.Id)"><i class="fa fa-edit"></i> </a>
+                                @if (i.UsedCount == 0)
+                                {
+                                    <a onclick="DeleteItem(@i.Id)" id="btnDelete" class="btn btn-danger btn-xs"><i class="fa fa-xing"></i> </a>
+                                }
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+            }
+
+
+        </tbody>
+
+    </table>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () { $('#example').DataTable(); });
+
+
+
+    function DeleteItem(id) {
+
+        bootbox.confirm({
+            title: "Delete Item?",
+            message: "Do you really want to delete this item.",
+            buttons: {
+                cancel: { label: '<i class="fa fa-times"></i> Cancel' },
+                confirm: { label: '<i class="fa fa-check"></i> Confirm' }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteItem", "StoreMaster")?id=' + id + '',
+                        dataType: 'json',
+                        data: { id: id },
+                        type: "POST",
+                        success: function (reponse) {
+                            var jsonData = $.parseJSON(reponse);
+                            $.notify({ message: jsonData.Message }, { type: 'success' });
+
+                            var url = '@Url.Action("SearchStoreMaster", "StoreMaster")';
+                            $("#ClassListing").load(url);
+                        },
+                        error: function (reponse) {
+                            bootbox.alert("error : " + reponse.error().responseText);
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+    function AddEdit(id) {
+        var url = '@Url.Action("AddEditStoreMaster", "StoreMaster")?id=' + id + '';
+        $("#modal-heading").text("Edit Item");
+        $("#m-modal-body").load(url);
+    }
+</script>

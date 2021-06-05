@@ -1,0 +1,84 @@
+﻿@model IEnumerable<IMS.Business.SalesReturnModel>
+@{
+    int index = 0;
+}
+
+<script src="~/Scripts/bootbox.min.js"></script>
+<div class="table table-responsive">
+    <table id="example" class="table table-bordered table-striped table-responsive">
+        <thead>
+            <tr>
+                <td>S.No.</td>
+                <td>Invoice Date</td>
+                <td>Invoice No</td>
+                <td>Customer Name</td>
+                <td>Return No</td>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var i in Model)
+            {
+                index++;
+                <tr>
+                    <td>@index</td>
+                    @{
+                        string dt = i.InvoiceDate == null ? "--" : i.InvoiceDate.Value.ToString("dd-MMM-yyyy");
+                    }
+                    <td>@dt</td>
+                    <td>@i.InvoiceNo</td>
+                    <td>@i.CustomerName</td>
+                    <td>@i.ReturnNo</td>
+                    <td class="text-center">
+                        <div>
+                            <a onclick="DeleteItem(@i.SalesReturnHeaderId)" id="btnDelete" class="btn btn-danger btn-xs"><i class="fa fa-xing"></i>  Delete</a>
+                            <a class="btn btn-primary btn-xs" id="btnEdit" href="@Url.Action("AddEditSalesReturn", "SalesReturn", new { id = @i.SalesReturnHeaderId })">
+                                <i class=" fa fa-edit"> </i>  Edit
+                            </a>
+                            <a href="@Url.Action("SalesReturnReport","SalesReturn",new { id=i.SalesReturnHeaderId })" target="_blank" id="" class="btn btn-danger btn-xs bg-purple"><i class="fa fa-file-pdf-o"></i> Print</a>
+                        </div>
+
+                    </td>
+                </tr>
+                        }
+
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function () { $('#example').DataTable(); });
+    function DeleteItem(id) {
+        bootbox.confirm({
+            title: "Delete Item?",
+            message: "Do you really want to delete this item.",
+            buttons: {
+                cancel: { label: '<i class="fa fa-times"></i> Cancel' },
+                confirm: { label: '<i class="fa fa-check"></i> Confirm' }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteSalesReturnItem", "SalesReturn")?id=' + id + '&status=d',
+                        dataType: 'json',
+                        data: { id: id },
+                        type: "POST",
+                        success: function (reponse) {
+                            var jsonData = $.parseJSON(reponse);
+                            $.notify({ message: jsonData.Message }, { type: 'success' });
+
+                            var url = '@Url.Action("SearchSalesReturn", "SalesReturn")';
+                            $("#ClassListing").load(url);
+                        },
+                        error: function (reponse) {
+                            bootbox.alert("error : " + reponse.error().responseText);
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+    
+</script>

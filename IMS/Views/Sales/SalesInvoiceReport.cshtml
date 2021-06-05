@@ -1,0 +1,145 @@
+﻿@using IMS.Utilities;
+@{
+    ViewBag.Title = "SalesInvoiceReport";
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+}
+@model IMS.Models.SalesInvoices.SalesInvoiceReportViewModel
+
+<div class="row">
+    <div class="col-md-4 invoice-col" style="font-size: 16px;">
+        <label>Invoice Date : </label> @Model.Date<br />
+        <label>Invoice Number : </label> @Model.SalesInvoiceNumber<br />      
+    </div>
+    <div class="col-md-6 invoice-col" style="font-size: 16px;">
+        <label>Customer : </label> @Model.CustomerName<br />
+        <label>Invoice Type : </label> @Model.SalesInvoiceType<br />
+    </div>
+</div>
+<br />
+<br />
+<div class="row">
+    <div class="col-xs-12 table-responsive">
+        <table class="table table-striped" id="tblList">
+            <thead>
+                <tr>
+                    <td>Product</td>
+                    <td>Unit</td>
+                    <td>Qty.</td>
+                    <td>Price</td>
+                    <td>Total</td>
+                    <td>CGST</td>                   
+                    <td>SGST</td>
+                    <td>IGST</td>
+                    <td>Gross</td>
+                    @if (UserSession.StoreType == 0)
+                    {
+                        <td>Batch No.</td>
+                        <td>Expiry Date</td>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.DetailList.Count() > 0)
+                {
+                    foreach (var i in Model.DetailList)
+                    {
+                        <tr>
+                            <td>@i.ProductName</td>
+                            <td>@i.UnitName</td>
+                            <td>@i.Quantity</td>
+                            <td>@i.MPR</td>
+                            <td>@i.TotalAmount</td>
+                            <td>@i.CGSTAmount <span>(@Convert.ToInt32(i.CGSTPercentage)%)</span></td>                           
+                            <td>@i.SGSTAmount <span>(@Convert.ToInt32(i.SGSTPercent)%)</span></td>
+                            <td>@i.IGSTAmount <span>(@Convert.ToInt32(i.IGSTPercentage)%)</span></td>
+                            <td>@i.GrossAmount</td>
+                            @if (UserSession.StoreType == 0)
+                            {
+                                <td>@i.BatchNo</td>
+                                <td>@i.ExpiryDate</td>
+                            }
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="14">No Data Found....</td>
+                    </tr>
+                }
+
+
+            </tbody>
+        </table>
+    </div>
+    <!-- /.col -->
+</div>
+
+<div class="row">
+    <div class="col-xs-6"></div>
+    <div class="col-xs-6">
+        <p class="lead">Amount</p>
+
+        <div class="table-responsive">
+            <table class="table">
+            @if (Model.TotalCGST != 0)
+            {
+                <tr>
+                    <th>Total CGST Amount:</th>
+                    <td>@Model.TotalCGST</td>
+                </tr>
+            }
+            @if (Model.TotalSGST != 0)
+            {
+                <tr>
+                    <th>Total SGST Amount:</th>
+                    <td>@Model.TotalSGST</td>
+                </tr>
+            }
+            @if (Model.TotalIGST != 0)
+            {
+                <tr>
+                    <th>Total IGST Amount:</th>
+                    <td>@Model.TotalIGST</td>
+                </tr>
+            }
+            @if (Model.TotalAmount != 0)
+            {
+                <tr>
+                    <th>Total Amount:</th>
+                    <td>@Model.TotalAmount</td>
+                </tr>
+            }
+            @if (Model.Discount != 0)
+            {
+                <tr>
+                    <th>Discount:</th>
+                    <td>@Model.Discount</td>
+                </tr>
+            }
+            @if (Model.ExtraAmount != 0)
+            {
+                <tr>
+                    <th>Extra Amount:</th>
+                    <td>@Model.ExtraAmount</td>
+                </tr>
+            }
+            @if (Model.FinalAmount != 0)
+            {
+                <tr>
+                    <th>Final Amount:</th>
+                    <td>@Model.FinalAmount</td>
+                </tr>
+            }
+            @if (Model.PaidAmount != 0)
+            {
+                    <tr>
+                        <th>Paid Amount:</th>
+                        <td>@Model.PaidAmount</td>
+                    </tr>
+            }
+            </table>
+        </div>
+    </div>
+</div>
+

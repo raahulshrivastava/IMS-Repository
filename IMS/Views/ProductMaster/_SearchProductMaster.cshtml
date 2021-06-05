@@ -1,0 +1,93 @@
+﻿@{
+    Layout = null;
+    int index = 0;
+}
+
+@model IEnumerable<IMS.Models.Products.ProductMasterModel>
+<script src="~/Scripts/bootbox.min.js"></script>
+<div class="table table-responsive">
+    <table id="example" class="table table-bordered table-striped table-responsive">
+        <thead>
+            <tr>
+                <td>S.No.</td>
+                <td>Product Name</td>
+                <td>Generic Name</td>
+                <td>Brand</td>
+                <td>Category</td>
+                <td>Tax</td>
+                <td>Unit</td>
+                <td>MRP</td>
+                <td>Item Type</td>
+                <td>Rack No</td>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var i in Model)
+        {
+            index++;
+                <tr>
+                    <td>@index</td>
+                    <td>@i.ProductName</td>
+                    <td>@i.GenericName</td>
+                    <td>@i.BrandDes</td>
+                    <td>@i.CategoryDes</td>
+                    <td>@i.TaxDes</td>
+                    <td>@i.UnitDes</td>
+                    <td>@i.SalesPriceMRP</td>
+                    <td>@i.ItemTypeDescription</td>
+                    <td>@i.RackNo</td>
+                    <td class="text-center">
+                        <div>
+                            <a class="btn btn-primary btn-xs" id="btnEdit" href="@Url.Action("ProductMaster", "ProductMaster", new { id = @i.ProductId })">
+                                <i class=" fa fa-edit">
+                                </i> 
+                            </a>
+                            @if (i.UsedCount == 0)
+                            {
+                            <a onclick="DeleteItem(@i.ProductId)" id="btnDelete" class="btn btn-danger btn-xs"><i class="fa fa-xing"></i></a>
+                            }
+                        </div>
+
+                    </td>
+                </tr>
+        }
+
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    function DeleteItem(id) {
+
+        bootbox.confirm({
+            title: "Delete Item?",
+            message: "Do you really want to delete this item.",
+            buttons: {
+                cancel: { label: '<i class="fa fa-times"></i> Cancel' },
+                confirm: { label: '<i class="fa fa-check"></i> Confirm' }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteItem", "ProductMaster")?id=' + id + '',
+                        dataType: 'json',
+                        data: { id: id },
+                        type: "POST",
+                        success: function (reponse) {
+                            var jsonData = $.parseJSON(reponse);
+                            $.notify({ message: jsonData.Message }, { type: 'success' });
+
+                            var url = '@Url.Action("SearchProductMaster", "ProductMaster")';
+                            $("#ClassListing").load(url);
+                        },
+                        error: function (reponse) {
+                            bootbox.alert("error : " + reponse.error().responseText);
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+</script>

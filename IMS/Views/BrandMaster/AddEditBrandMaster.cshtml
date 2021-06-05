@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewBag.Title = "Add Edit Form";
+    Layout = null;
+}
+
+@model IMS.Business.BrandModel
+
+<style type="text/css">
+    .astrrick {
+        color: red;
+        font-weight: bolder;
+        font-size: medium;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+</style>
+
+
+@using (Ajax.BeginForm("AddEditBrandMaster", "BrandMaster", null, new AjaxOptions() { OnSuccess = "InsertUpdateResponse" }))
+{
+    @Html.HiddenFor(a => a.Id)
+
+    <div class="box-body">
+
+
+        <div class="col-md-6">
+            <label>Brand Name <span class="astrrick">*</span></label>
+            @Html.TextBoxFor(a => a.BranchName, new { @class = "form-control", placeholder = "Enter Brand Name", required = "required" })
+            @Html.ValidationMessageFor(a => a.BranchName)
+        </div>
+        <div class="col-md-12">
+            <label>Description</label>
+
+            @Html.TextAreaFor(a => a.Description, new { @class = "form-control", placeholder = "Enter Description" })
+
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="checkbox icheck">
+                <label>
+                    @Html.CheckBoxFor(a => a.ChkIsActive) Is Active
+
+                </label>
+            </div>
+        </div>
+    </div>
+            <!-- /.box-body -->
+    <div class="box-footer">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+
+}
+
+

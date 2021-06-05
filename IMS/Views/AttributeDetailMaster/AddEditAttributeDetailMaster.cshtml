@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewBag.Title = "Add Edit Form";
+    Layout = null;
+}
+
+@model IMS.Business.AttributeModel
+
+
+@using (Ajax.BeginForm("AddEditAttributeDetailMaster", "AttributeDetailMaster", null, new AjaxOptions() { OnSuccess = "InsertUpdate" }))
+{
+    @Html.HiddenFor(a => a.Id)
+
+    <div class="box-body">
+     
+
+        <div class="col-md-6">
+            <label>Detail Name <span class="astrrick">*</span></label>
+            @Html.TextBoxFor(a => a.DetailName, new { @class = "form-control", placeholder = "Enter Detail Name", required = "required" })
+
+        </div>
+        <div class="col-md-6">
+            <label>Attribute Name <span class="astrrick">*</span></label>
+
+            @Html.DropDownListFor(a => a.AttributeId, Model.DdlAttribute, "-Select-", new { @class = "form-control", required = "required" })
+
+        </div>
+
+        <div class="col-md-12">
+            <label>Description</label>
+            @Html.TextAreaFor(a => a.Description, new { @class = "form-control", placeholder = "Enter Description" })
+
+        </div>
+        <div class="col-md-6">
+            <div class="checkbox icheck">
+                <label>
+                    @Html.CheckBoxFor(a => a.ChkIsActive) Is Active
+
+                </label>
+            </div>
+        </div>
+    </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+
+}
+<script src="~/Scripts/Custom/Attribute.js"></script>

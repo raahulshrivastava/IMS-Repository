@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewBag.Title = "Add Edit Form";
+    Layout = null;
+}
+@model IMS.Business.UserModel
+
+
+<section class="content">
+    @using (Ajax.BeginForm("AddEditUserMaster", "UserMaster", null, new AjaxOptions() { OnSuccess = "InsertUpdate" }))
+    {
+        @Html.HiddenFor(a => a.Id)
+        <div role="form">
+            <div class="box-body">
+                <div class="row">
+
+
+                    <div class="col-md-6">
+                        <label>User Name <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.UserName, new { @class = "form-control", placeholder = "Enter User Name", required = "required" })
+                        @Html.ValidationMessageFor(a => a.UserName)
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Employee Name <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.EmployeeName, new { @class = "form-control", required = "required" })
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>User Type <span class="astrrick">*</span></label>
+                        @Html.DropDownListFor(a => a.UserType, Model.UserTypeDdl, "-Select-", new { @class = "form-control", required = "required" })
+
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Password <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.Password, new { @class = "form-control", type = "password", required = "required" })
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <label>Description</label>
+
+                        @Html.TextAreaFor(a => a.Description, new { @class = "form-control", placeholder = "Enter Description", required = "required" })
+
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="checkbox icheck icheckbox_flat-green">
+                            <label>
+                                @Html.CheckBoxFor(a => a.CheckIsActive) Is Active
+
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <div class="">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+
+            </div>
+        </div>
+    }
+
+
+</section>

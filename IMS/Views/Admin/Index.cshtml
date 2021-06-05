@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+@model List<IMS.DataContext.UserTable>
+<h2>User Data</h2>
+<link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.min.css">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="../../bower_components/font-awesome/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="../../bower_components/Ionicons/css/ionicons.min.css">
+<!-- DataTables -->
+<link rel="stylesheet" href="../../bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="../../dist/css/AdminLTE.min.css">
+<!-- AdminLTE Skins. Choose a skin from the css/skins
+     folder instead of downloading all of them to reduce the load. -->
+<link rel="stylesheet" href="../../dist/css/skins/_all-skins.min.css">
+
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+<div class="box-body">
+    <table id="example1" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>User Id</th>
+                <th>Password</th>
+                <th>Role Id</th>
+                <th>Created On</th>
+                <th>Created By</th>
+            </tr>
+        </thead>
+        @if (Model.Count() > 0)
+        {
+            foreach (var i in Model)
+            {
+                <tbody>
+                    <tr>
+                        <td>@i.FirstName @i.LastName</td>
+                        <td>@i.UserId</td>
+                        <td>@i.Password</td>
+                        <td>@i.RoleId</td>
+                        <td>@i.CreatedOn</td>
+                        <td>@i.CreatedBy</td>
+                    </tr>
+                </tbody>
+            }
+        }
+        <tbody></tbody>
+
+    </table>
+</div>
+<script type="text/javascript">
+  $(function () {
+ 
+    $('#example1').DataTable({
+      'paging'      : true,
+      'lengthChange': false,
+      'searching'   : false,
+      'ordering'    : true,
+      'info'        : true,
+      'autoWidth'   : false
+    })
+  })
+</script>
+<!-- jQuery 3 -->
+<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- DataTables -->
+<script src="../../bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="../../bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<!-- SlimScroll -->
+<script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="../../bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="../../dist/js/demo.js"></script>

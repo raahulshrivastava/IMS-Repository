@@ -1,0 +1,23 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+    int index = 0;
+}
+
+@model IMS.Models.SupplierPayment.SupplierPaymentReportViewModel
+
+
+<div class="row">
+    <div class="col-md-4 invoice-col">
+        <label>Payment Date : </label> @Model.PaymentDate<br />
+        <label>Payment Number : </label> @Model.PaymentNo<br />
+        <label>Supplier Name : </label> @Model.SupplierName<br />
+        <label>Description : </label> @Model.Description<br />
+    </div>
+    <div class="col-md-4 invoice-col">
+        <label>Total Due Amount Before Payment : </label> @Model.TotalDue<br />
+        <label>Total Paid Amount Before Payment : </label> @Model.TotalPaid<br />
+        <label>Payment Amount : </label> @Model.PaymentAmount<br />
+    </div>
+
+</div>

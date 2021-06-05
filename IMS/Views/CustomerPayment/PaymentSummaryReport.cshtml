@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "PaymentSummaryReport";
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+}
+
+<!-- Widget -->
+<div class="widget">
+    <div class="widget-body innerAll inner-2x overflow-x">
+        <div class="col-table-row">
+            <div class="row">
+                <div class="col-md-12" style="margin-bottom: 10px; font-size: 17px">
+                    @Html.Raw(ViewBag.Searchcriteria)
+                </div>
+            </div>
+            <!-- Table -->
+            <table class="table export_table" style="border-top: 1px solid #e6e6e6;">
+                <thead class="bg-gray">
+                    <tr>
+                        <th class="center" style="width: 10%;">S.No.</th>
+                        <th class="center" style="width: 10%;">Customer Name</th>
+                        <th class="center" style="width: 10%;">Due Amount</th>
+                        <th class="center" style="width: 10%;">Payment Amount</th>                        
+                        <th class="center" style="width: 10%;">Remaining Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int cnt = 1;
+                        int NoRowCnt = 0;
+                        decimal RemainingAmount = 0;
+                        decimal TotalDueAmount = 0;
+                        decimal TotalPaymentAmount = 0;
+                        decimal TotalRemainingAmount = 0;
+                    }
+                    @if (ViewBag.cnt > 0)
+                    {
+                        foreach (var item in ViewBag.result)
+                        {
+                            RemainingAmount = Convert.ToDecimal(item["DueAmount"]) - Convert.ToDecimal(item["PaymentAmount"]);
+
+                            TotalDueAmount += item["DueAmount"];
+                            TotalPaymentAmount += item["PaymentAmount"];
+                            TotalRemainingAmount += RemainingAmount;
+
+                            <tr class="selectable">
+                                <td class="center">@cnt</td>
+                                <td class="center">@item["CustomerName"] </td>
+                                <td class="center">@item["DueAmount"]</td>
+                                <td class="center">@item["PaymentAmount"]</td>
+                                <td class="center">@RemainingAmount</td>
+                            </tr>
+                            ++cnt;
+                            ++NoRowCnt;
+                            RemainingAmount = 0;
+                        }
+                    }
+                    <tr>
+                        <td class="center" style="text-align:right;" colspan="2"><b>Total : </b></td>
+                        <td class="left"><b>@Math.Round(TotalDueAmount, 2)</b></td>
+                        <td class="left"><b>@Math.Round(TotalPaymentAmount, 2)</b></td>
+                        <td class="left"><b>@Math.Round(TotalRemainingAmount, 2)</b></td>                        
+                    </tr>
+                </tbody>
+            </table>
+            @if (NoRowCnt == 0)
+            {
+                <div style="width: 80%; text-align: center; color: red">No Record Found</div>
+            }
+        </div>
+    </div>
+
+</div>
+<!-- // END col-app -->

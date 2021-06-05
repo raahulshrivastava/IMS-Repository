@@ -1,0 +1,39 @@
+﻿
+@{
+    Layout = null;
+}
+
+@model IMS.Business.AttributeModel
+
+
+    @using (Ajax.BeginForm("AddEditAttribute", "AttributeMaster", new AjaxOptions() { OnSuccess = "InsertUpdateResponse" }))
+    {
+        @Html.HiddenFor(a => a.Id)
+
+        <div class="box-body">
+
+            <div class="col-md-6">
+                <label>Attribute Name</label>
+                @Html.TextBoxFor(a => a.AttributeName, new { @class = "form-control", placeholder = "Enter Attribute Name", required = "required" })
+
+            </div>
+            <div class="col-md-12">
+                <label>Description</label>
+                @Html.TextAreaFor(a => a.Description, new { @class = "form-control numberOnly", placeholder = "Enter Description", required = "required" })
+
+            </div>
+            <div class="col-md-6">
+
+                <label class="checkbox icheck">
+                    @Html.CheckBoxFor(a => a.ChkIsActive) Is Active
+
+                </label>
+
+            </div>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+
+    }

@@ -1,0 +1,109 @@
+﻿
+@{
+    Layout = null;
+}
+
+@model IEnumerable<IMS.DataContext.SupplierMaster>
+<script src="~/Scripts/bootbox.min.js"></script>
+<style type="text/css">
+    .ui-dialog {
+        left: 265px !important;
+        top: 30px !important;
+    }
+</style>
+
+<table id="example" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <td>S.No.</td>
+            <th>Supplier Name</th>
+            <td>Contact Number</td>
+            <th>Email Id</th>
+            <th>Opening Balance</th>
+            <th>Active</th>
+            <th>Description</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int index = 0;
+        }
+        @if (Model.Count() > 0)
+        {
+            foreach (var i in Model)
+            {
+                index++;
+                <tr>
+                    <td>@index</td>
+                    <td>@i.SupplierName</td>
+                    <td>@i.ContactNumber</td>
+                    <td>@i.Email</td>
+                    <td>@i.OpeningBalance</td>
+                    @{ 
+                        var isActive = i.IsActive == "Y" ? "Yes" : "No";
+                    }
+                    <td>@isActive</td>
+                    <td>@i.Description</td>
+                    <td class="text-center">
+                        <div>
+                            <a class="btn btn-primary btn-xs" id="btnEdit" data-toggle="modal" data-target="#m-modal"  onclick="AddEdit(@i.Id)"><i class="fa fa-edit"></i></a>
+                            @if (i.UsedCount == 0)
+                            {
+                                <a onclick="DeleteItem(@i.Id)" id="btnDelete" class="btn btn-danger btn-xs"><i class="fa fa-xing"></i></a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+
+
+    </tbody>
+
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () { $('#example').DataTable(); });
+
+
+
+    function DeleteItem(id) {
+
+        bootbox.confirm({
+            title: "Delete Item?",
+            message: "Do you really want to delete this item.",
+            buttons: {
+                cancel: { label: '<i class="fa fa-times"></i> Cancel' },
+                confirm: { label: '<i class="fa fa-check"></i> Confirm' }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteItem", "SupplierMaster")?id=' + id + '',
+                        dataType: 'json',
+                        data: { id: id },
+                        type: "POST",
+                        success: function (reponse) {
+                            var jsonData = $.parseJSON(reponse);
+                            $.notify({ message: jsonData.Message }, { type: 'success' });
+
+                            var url = '@Url.Action("SearchSupplierMaster", "SupplierMaster")';
+                            $("#ClassListing").load(url);
+                        },
+                        error: function (reponse) {
+                            bootbox.alert("error : " + reponse.error().responseText);
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+    function AddEdit(id) {
+        var url = '@Url.Action("AddEditSupplierMaster", "SupplierMaster")?id=' + id + '';
+        $("#modal-heading").text("Edit Item");
+        $("#m-modal-body").load(url);
+    }
+</script>

@@ -1,0 +1,53 @@
+﻿
+@{
+    ViewBag.Title = "Product Availablity Report";
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+}
+<!-- Widget -->
+<div class="widget">
+    <div class="widget-body innerAll inner-2x overflow-x">
+        <div class="col-table-row">
+            <!-- Table -->
+            <table class="table export_table" style="border-top: 1px solid #e6e6e6;">
+                <thead class="bg-gray">
+                    <tr>
+                        <th class="center" style="width: 10%;">S.No.</th>
+                        <th class="center" style="width: 10%;">Product Name</th>
+                        <th class="center" style="width: 10%;">Available Quantity</th>
+                        <th class="center" style="width: 10%;">Rack Numner </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int cnt = 1;
+                        int NoRowCnt = 0;                        
+                    }
+                    @if (ViewBag.cnt > 0)
+                    {
+                        foreach (var item in ViewBag.result)
+                        {
+                            if (Convert.ToInt32(item["AvlQty"]) < Convert.ToInt32(item["RecorderQuantity"]))
+                            {
+                                <tr class="selectable">
+                                    <td class="center">@cnt</td>
+                                    <td class="center"> @item["ProductName"] </td>
+                                    <td class="center"> @item["AvlQty"]</td>
+                                    <td class="center">@item["RackNo"]</td>
+                                </tr>
+                                ++cnt;
+                                ++NoRowCnt;
+                            }
+                        }
+                    }
+
+                </tbody>
+            </table>
+            @if (NoRowCnt == 0)
+            {
+                <div style="width: 80%; text-align: center; color: red">No Record Found</div>
+            }
+        </div>
+    </div>
+
+</div>
+<!-- // END col-app -->

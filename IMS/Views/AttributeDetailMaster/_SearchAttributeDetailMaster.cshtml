@@ -1,0 +1,60 @@
+﻿
+@{
+    Layout = null;
+}
+
+@model IEnumerable<IMS.Business.AttributeModel>
+<script src="~/Scripts/bootbox.min.js"></script>
+
+
+<table id="example" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <td>S.No.</td>
+            <th class="hidden">Id</th>
+
+            <th>Detail Name</th>
+            <th>Attribute Name</th>
+            <th>Description</th>
+            <th>Active</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int index = 0;
+        }
+        @if (Model.Count() > 0)
+        {
+            foreach (var i in Model)
+            {
+                index++;
+                <tr>
+                    <td>@index</td>
+                    <td class="hidden">@i.Id</td>
+
+                    <td>@i.DetailName</td>
+                    <td>@i.AttributeName</td>
+                    <td>@i.Description</td>
+                    @{ 
+                        string active="";
+                        active = i.IsAcive == "Y" ? "Yes" : "No";
+                    }
+                    <td>@active</td>
+                    <td class="text-center">
+                        <div>
+                            <a class="btn btn-primary btn-xs" id="btnEdit" data-toggle="modal" data-target="#m-modal"  onclick="AddEdit(@i.Id)"><i class="fa fa-edit"></i></a>
+                            @if (i.UsedCount == 0)
+                            {
+                                <a onclick="DeleteItem(@i.Id)" id="btnDelete" class="btn btn-danger btn-xs"><i class="fa fa-xing"></i></a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                            }
+                        }
+
+
+    </tbody>
+
+</table>

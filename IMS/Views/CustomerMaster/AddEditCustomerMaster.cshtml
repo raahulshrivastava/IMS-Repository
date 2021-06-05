@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewBag.Title = "Add Edit Form";
+    Layout = null;
+}
+
+@model IMS.Business.CustomerModel
+<style type="text/css">
+    .astrrick{
+        color:red;
+        font-weight:bolder;
+        font-size: medium;
+        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+</style>
+
+<script src="~/ClientSideUtility/js/jsUtility.js"></script>
+<section class="content">
+    @using (Ajax.BeginForm("AddEditCustomerMaster", "CustomerMaster", null, new AjaxOptions() { OnSuccess = "InsertUpdateResponse" }))
+    {
+        @Html.HiddenFor(a => a.Id)
+        <div role="form">
+            <div class="box-body">
+                <div class="row">
+                 
+                    <div class="col-md-6">
+                        <label>Customer Name <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.CustomerName, new { @class = "form-control onlyalphanumeric", placeholder = "Enter Customer Name", required = "required" })
+                        @Html.ValidationMessageFor(a => a.CustomerName)
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Contact Number <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.ContactNumber, new { @class = "form-control onlynumber", placeholder = "Enter Contact Number", required = "required" })
+                        @Html.ValidationMessageFor(a => a.ContactNumber)
+                    </div> 
+
+                    <div class="col-md-6">
+                        <label>Email Id</label>
+                        @Html.TextBoxFor(a => a.EmailId, new { @class = "form-control", placeholder = "Enter Email Id", type = "email", required = "required" })
+                       
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Opening Balance <span class="astrrick">*</span></label>
+                        @Html.TextBoxFor(a => a.OpeningBalance, new { @class = "form-control onlydecimal",  required = "required" })
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <label>Address</label>
+                        @Html.TextBoxFor(a => a.Address, new { @class = "form-control", placeholder = "Enter Address", required = "required" })
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <label>Description</label>
+
+                        @Html.TextAreaFor(a => a.Description, new { @class = "form-control", placeholder = "Enter Description", required = "required" })
+
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="checkbox icheck icheckbox_flat-green">
+                            <label>
+                                @Html.CheckBoxFor(a => a.CheckIsActive) Is Active
+
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    }
+
+
+</section>

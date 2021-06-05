@@ -1,0 +1,155 @@
+﻿-
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+@model IMS.Business.UserModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="~/AdminLTE-2.4.3/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <style type="text/css">
+
+        @@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+
+        body {
+            background: #fcfcfc;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .login {
+            width: 350px;
+            margin: 16px auto;
+            font-size: 16px;
+        }
+
+            /* Reset top and bottom margins from certain elements */
+            .login-header,
+            .login p {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+        /* The triangle form is achieved by a CSS hack */
+        .login-triangle {
+            width: 0;
+            margin-right: auto;
+            margin-left: auto;
+            border: 12px solid transparent;
+            border-bottom-color: #28d;
+        }
+
+        .login-header {
+            background: #28d;
+            padding: 10px;
+            font-size: 1.4em;
+            font-weight: normal;
+            text-align: center;
+            text-transform: uppercase;
+            color: #fff;
+        }
+
+        .login-container {
+            background: #ebebeb;
+            padding: 12px;
+        }
+
+        /* Every row inside .login-container is defined with p tags */
+        .login p {
+            padding: 12px;
+        }
+
+        .login input, .ddl, .btnSubmit {
+            box-sizing: border-box;
+            display: block;
+            width: 100%;
+            border-width: 1px;
+            border-style: solid;
+            padding: 6px;
+            outline: 0;
+            font-family: inherit;
+            font-size: 0.95em;
+        }
+
+            .login input[type="email"],
+            .login input[type="password"],
+            .ddl {
+                background: #fff;
+                border-color: #bbb;
+                color: #555;
+            }
+
+                /* Text fields' focus effect */
+                .login input[type="email"]:focus,
+                .login input[type="password"]:focus, .ddl :focus {
+                    border-color: #888;
+                }
+
+        .btnSubmit {
+            background: #28d;
+            border-color: transparent;
+            color: #fff;
+            cursor: pointer;
+        }
+
+            .btnSubmit:hover {
+                background: #17c;
+            }
+
+            /* Buttons' focus effect */
+            .btnSubmit:focus {
+                border-color: #05a;
+            }
+    </style>
+</head>
+<body>
+    <div class="login">
+        <div class="login-triangle"></div>
+
+        <h2 class="login-header">Log in</h2>
+        @using (Ajax.BeginForm("Index", "Web", null,
+                    new AjaxOptions() { OnSuccess = "InsertUpdateResponse" },
+                    new { @class = "login-container" }))
+        {
+            <p>@Html.TextBoxFor(a => a.UserName, new { @class = "", @placeholder = "User Name", @required = "required" })</p>
+            <p>@Html.TextBoxFor(a => a.Password, new { @type = "password", @class = "", @placeholder = "Password", @required = "required" })</p>
+            <p>@Html.DropDownListFor(a => a.FinYear, Model.BindFinYear, "-Select Financial Period-", new { @class = "ddl", @required = "required" })</p>
+            <p>@Html.DropDownListFor(a => a.StoreId, Model.BindStore, "-Select Store Type-", new { @class = "ddl", @required = "required" })</p>
+            <p><button class="btnSubmit" type="submit" value="Log in">Log In</button></p>
+        }
+
+
+
+    </div>
+    <script type="text/javascript">
+
+        function InsertUpdateResponse(response) {
+
+            if (response != null) {
+                var jsonData = $.parseJSON(response);
+                if (jsonData.MessageType == 1) {
+                    var url = '@Url.Action("IMSDashboard", "Web")';
+                    window.location.href = url;
+                }
+                else {
+                    alert(jsonData.Message);
+                }
+            }
+
+
+        }
+    </script>
+</body>
+
+
+</html>
+
+
+
+

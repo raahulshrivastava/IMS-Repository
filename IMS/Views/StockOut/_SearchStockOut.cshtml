@@ -1,0 +1,95 @@
+﻿
+@model List<IMS.Business.StockIn>
+@{
+    Layout = null;
+    int index = 0;
+}
+
+<script src="~/Scripts/bootbox.min.js"></script>
+
+
+<table id="example" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <td>S.No.</td>
+            <th>Stock Out Number</th>
+            <th>Stock Out Date</th>
+            <th>Created By</th>
+            <th>Created On</th>
+           
+            <th class="text-center">Actions</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+        @foreach (var i in Model)
+        {
+            index++;
+            <tr>
+                <td>@index</td>
+                <td>@i.StockInNumber</td>
+                <td>@i.StockInDate.Value.ToString("dd-MMM-yyyy")</td>
+                <td>@i.CreatedBy</td>
+                <td>@i.CreatedOn.Value.ToString("dd-MMM-yyyy")</td>
+            
+
+                <td class="text-center">
+                    <div class="btn">
+                        <a class="btn btn-primary btn-xs" id="btnEdit" href="@Url.Action("AddEditStockOut", "StockOut", new { id = @i.StockInHeaderId })">
+                            <i class=" fa fa-edit">
+                                Edit
+                            </i>
+                        </a>
+                        <a onclick="DeleteItem(@i.StockInHeaderId)" id="btnDelete" class="btn btn-danger btn-xs"><i class="fa fa-xing"></i>  Delete</a>
+                        <a href="@Url.Action("StockOutReport","StockOut",new { id=i.StockInHeaderId })" target="_blank" id="btnDelete" class="btn btn-danger btn-xs bg-purple"><i class="fa fa-file-pdf-o"></i> Print</a>
+                    </div>
+
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () { $('#example').DataTable(); });
+
+
+
+    function DeleteItem(id) {
+
+        bootbox.confirm({
+            title: "Delete Item?",
+            message: "Do you really want to delete this item.",
+            buttons: {
+                cancel: { label: '<i class="fa fa-times"></i> Cancel' },
+                confirm: { label: '<i class="fa fa-check"></i> Confirm' }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteItemStockOut", "StockOut")?id=' + id + '',
+                        dataType: 'json',
+                        data: { id: id },
+                        type: "POST",
+                        success: function (reponse) {
+                            var jsonData = $.parseJSON(reponse);
+                            $.notify({ message: jsonData.Message }, { type: 'success' });
+
+                            var url = '@Url.Action("SearchStockOut", "StockOut")';
+                            $("#ClassListing").load(url);
+                        },
+                        error: function (reponse) {
+                            bootbox.alert("error : " + reponse.error().responseText);
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+ 
+</script>

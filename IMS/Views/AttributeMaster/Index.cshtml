@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewBag.Title = "Attribute Master";
+}
+@using IMS.Utilities;
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Attribute Master
+    </h1>
+    <div class="pull-right">
+        <button type="button" class="btn bg-blue" id="btnAdd" data-toggle="modal" data-target="#m-modal"><i class="fa fa-plus"></i> Add new</button>
+        <button type="button" onclick="exported('@((int)Enums.Modules.AttributeMaster)')" class="btn btn-success">
+            <i class="fa fa-download"></i>
+            Export Excel
+        </button>
+        <button type="button" class="btn bg-olive" data-toggle="modal" data-target="#modal-default">
+            <i class="fa fa-upload"></i>
+            Import Excel
+        </button>
+    </div>
+
+</div>
+<br />
+
+<div class="box box-success clearfix">
+    <div class="box-body" id="ClassListing">
+        @{
+            Html.RenderAction("SearchAttributeMaster", "AttributeMaster");
+        }
+    </div>
+
+</div>
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        @using (Html.BeginForm("ImportExcel", "ImportExportDocument", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input type="hidden" name="typeId" id="typeId" value="@((int)Enums.Modules.AttributeMaster)" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Import Excel</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Please select file to import </p>   <input type="file" name="file" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        }
+
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="m-modal" tabindex="-1" role="dialog" aria-labelledby="pdf-report" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-heading"></h3>
+                <button type="button" class="close  btn" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body " id="m-modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $("#btnAdd").click(function (event) {
+        var url = '@Url.Action("AddEditAttribute", "AttributeMaster")';
+        $("#modal-heading").text("Add New Item");
+        $("#m-modal-body").load(url);
+    });
+
+
+    function InsertUpdateResponse(response) {
+        var jsonData = $.parseJSON(response);
+        var mess = jsonData.Message;
+        var messType = jsonData.MessageType;
+        if (messType == 1) { $.notify({ message: jsonData.Message }, { type: 'success' }); }
+        else { $.notify({ message: jsonData.Message }, { type: 'warning' }); }
+        var url = '@Url.Action("SearchAttributeMaster", "AttributeMaster")';
+        $("#ClassListing").load(url);
+        $("#m-modal").modal('hide');
+    }
+    function AddEdit(id) {
+        var url = '@Url.Action("AddEditAttribute", "AttributeMaster")?id=' + id + '';
+        $("#modal-heading").text("Edit Item");
+        $("#m-modal-body").load(url);
+    }
+</script>

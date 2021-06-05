@@ -1,0 +1,110 @@
+﻿
+@{
+    Layout = null;
+}
+
+@model IEnumerable<IMS.DataContext.UnitMaster>
+<script src="~/Scripts/bootbox.min.js"></script>
+
+
+<table id="unitMasterDataTable" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <td>S.No.</td>
+
+            <th>Unit Name</th>
+            <td>Conversion Unit</td>
+            <th>Conversion Quantity</th>
+            <th>Description</th>
+            <th>Active</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int index = 0;
+        }
+        @if (Model.Count() > 0)
+        {
+            foreach (var i in Model)
+            {
+                var conversionUnitName = Model.Where(a => a.Id == i.ConversionUnit).Select(a => a.UnitName).FirstOrDefault();
+                conversionUnitName = Convert.ToString(conversionUnitName);
+                bool displayEditButton = string.IsNullOrEmpty(conversionUnitName) ? false : true;
+                string isactiveVal = i.IsActive == "Y" ? "Yes" : "No";
+                index++;
+                <tr>
+                    <td>@index</td>
+                    <td class="hidden">@i.Id</td>
+                    <td>@i.UnitName</td>
+                    <td>@conversionUnitName</td>
+                    <td>@i.ConversionQuantity</td>
+                    <td>@i.Description</td>
+                    <td>@isactiveVal</td>
+                    <td class="text-center">
+                        <div>
+                            @if (displayEditButton)
+                            {
+                                <a class="btn btn-primary btn-xs" id="btnEdit" data-toggle="modal" data-target="#m-modal"  onclick="AddEdit(@i.Id)"><i class="fa fa-edit"></i></a>
+                                if (i.UsedCount == 0)
+                                {
+                                   <a onclick="DeleteItem(@i.Id)" id="btnDelete" class="btn btn-danger btn-xs"><i class="fa fa-xing"></i></a>
+                                }
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+
+
+    </tbody>
+
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#unitMasterDataTable').DataTable();
+    });
+
+
+
+    function DeleteItem(id) {
+
+        bootbox.confirm({
+            title: "Delete Item?",
+            message: "Do you really want to delete this item.",
+            buttons: {
+                cancel: { label: '<i class="fa fa-times"></i> Cancel' },
+                confirm: { label: '<i class="fa fa-check"></i> Confirm' }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteItem", "UnitMaster")?id=' + id + '',
+                        dataType: 'json',
+                        data: { id: id },
+                        type: "POST",
+                        success: function (reponse) {
+                            var jsonData = $.parseJSON(reponse);
+                            $.notify({ message: jsonData.Message }, { type: 'success' });
+
+                            var url = '@Url.Action("SearchUnitMaster", "UnitMaster")';
+                            $("#ClassListing").load(url);
+                        },
+                        error: function (reponse) {
+                            bootbox.alert("error : " + reponse.error().responseText);
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+    function AddEdit(id) {
+        var url = '@Url.Action("AddEditUnitMaster", "UnitMaster")?id=' + id + '';
+        $("#modal-heading").text("Edit Item");
+        $("#m-modal-body").load(url);
+    }
+</script>

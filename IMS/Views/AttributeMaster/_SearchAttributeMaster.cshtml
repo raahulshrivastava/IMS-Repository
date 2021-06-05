@@ -1,0 +1,88 @@
+﻿@{
+    Layout = null;
+}
+
+@model IEnumerable<IMS.DataContext.AttributeMaster>
+
+<script src="~/Scripts/bootbox.min.js"></script>
+<table id="DataTable" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <td>S.No.</td>
+            <th>Attribute Name</th>
+            <th>Active</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int index = 0;
+        }
+        @if (Model.Count() > 0 && Model != null)
+        {
+            foreach (var i in Model)
+            {
+                index++;
+                <tr>
+                    <td>@index</td>
+                    <td>@i.AttributeName</td>    
+                    @{ 
+                        string Active = "";
+                        Active = i.IsActive == "Y" ? "Yes" : "No";
+                    }              
+                    <td>@Active</td>
+                    <td class="text-center">
+                        <div>
+                            <a class="btn btn-primary btn-xs" id="btnEdit" data-toggle="modal" data-target="#m-modal" onclick="AddEdit(@i.Id)"><i class="fa fa-edit"></i></a>
+                            @if (i.UsedCount == 0)
+                            {
+                                <a onclick="DeleteItem(@i.Id)" id="btnDelete" class="btn btn-danger btn-xs"><i class="fa fa-xing"></i></a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5">No Data Found.</td></tr>
+                        }
+
+    </tbody>
+
+</table>
+<script type="text/javascript">
+    $(document).ready(function () { $('#DataTable').DataTable(); });
+
+    function DeleteItem(id) {
+        bootbox.confirm({
+            title: "Delete Item?",
+            message: "Do you really want to delete this item.",
+            buttons: {
+                cancel: { label: '<i class="fa fa-times"></i> Cancel' },
+                confirm: { label: '<i class="fa fa-check"></i> Confirm' }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteItem", "AttributeMaster")?id=' + id + '',
+                        dataType: 'json',
+                        data: { id: id },
+                        type: "POST",
+                        success: function (reponse) {
+                            var jsonData = $.parseJSON(reponse);
+                            $.notify({ message: jsonData.Message }, { type: 'success' });
+                            var url = '@Url.Action("SearchAttributeMaster", "AttributeMaster")';
+                            $("#ClassListing").load(url);
+                        },
+                        error: function (reponse) {
+                            bootbox.alert("error : " + reponse.error().responseText);
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+</script>

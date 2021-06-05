@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewBag.Title</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="~/AdminLTE-2.4.3/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/AdminLTE-2.4.3/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="~/AdminLTE-2.4.3/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/AdminLTE-2.4.3/dist//css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="~/AdminLTE-2.4.3/dist//css/skins/_all-skins.min.css">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link href="~/AdminLTE-2.4.3/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .astrrick {
+            color: red;
+            font-size: small;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        .modal-header .close {
+            margin-top: -28px !important;
+            font-size: 26px;
+        }
+
+        .bootbox .modal-dialog .modal-content {
+            width: 300px !important;
+        }
+
+        .bootbox .modal-dialog {
+            top: 200px;
+            width: 300px !important;
+        }
+
+
+            .bootbox .modal-dialog .modal-content .modal-body bootbox-body {
+                font-size: 18px !important;
+            }
+
+            .bootbox .modal-dialog .modal-content .modal-footer button {
+                padding: 5px 10px;
+                font-size: 12px;
+                line-height: 1.5;
+                border-radius: 3px;
+            }
+
+            .bootbox .modal-dialog .modal-content .modal-header button {
+                margin-top: -5px !important;
+                font-size: 26px;
+            }
+
+        .ui-dialog {
+            overflow: hidden;
+            position: absolute;
+            top: 10%;
+            left: 33.33%;
+            z-index: 1500;
+            padding: .2em;
+            outline: #000000;
+        }
+
+        @@media print {
+            .no-print, .no-print * {
+                display: none !important;
+            }
+        }
+
+        .modal-header .close {
+            margin-top: -39px;
+            font-size: 26px;
+        }
+    </style>
+    <!-- ./wrapper -->
+    <!-- jQuery 3 -->
+    <script src="~/AdminLTE-2.4.3/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="~/AdminLTE-2.4.3/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- SlimScroll -->
+    <script src="~/AdminLTE-2.4.3/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <!-- FastClick -->
+    <script src="~/AdminLTE-2.4.3/bower_components/fastclick/lib/fastclick.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/AdminLTE-2.4.3/dist/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/AdminLTE-2.4.3/dist/js/demo.js"></script>
+    @*<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    @*<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+    <script src="~/Scripts/jquery.validate.js"></script>
+
+    @*DataTable*@
+    <link href="~/Scripts/DataTable/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <script src="~/Scripts/DataTable/js/jquery.dataTables.min.js"></script>
+
+    @*Notify*@
+    <script src="~/Scripts/bootstrap-notify.min.js"></script>
+    <script src="~/ClientSideUtility/js/jsUtility.js"></script>
+    <script src="~/AdminLTE-2.4.3/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript">
+
+        //$(".numberOnly").keypress(function (e) {
+        //    if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+        //        return false;
+        //    }
+        //});
+
+     
+
+        function exported(typeId) {
+            $.ajax({
+                type: "Post",
+                url: '@Url.Action("ExportExcel", "ImportExportDocument")?type=' + typeId,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    var response = JSON.parse(data);
+                    window.location = '/ImportExportDocument/Download?fileGuid=' + response.FileGuid
+                                      + '&filename=' + response.FileName;
+                }
+            });
+        }
+        $(document).ready(function () {
+            if ('@TempData["Message"]' != null && '@TempData["Message"]' != "") {
+                $.notify({ message: '@TempData["Message"]' }, { type: 'success' });
+            }
+
+        });
+    </script>
+</head>
+<!-- ADD THE CLASS fixed TO GET A FIXED HEADER AND SIDEBAR LAYOUT -->
+<!-- the fixed layout is not compatible with sidebar-mini -->
+<body class="hold-transition skin-blue fixed sidebar-mini">
+    <!-- Site wrapper -->
+    <div class="wrapper">
+        @Html.Partial("_Header")
+        @Html.Partial("_SideMenu")
+        <div class="content-wrapper">
+            <section class="content">
+                @RenderBody()
+            </section>
+        </div>
+        @Html.Partial("_Footer")
+    </div>
+
+</body>
+</html>

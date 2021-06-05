@@ -1,0 +1,343 @@
+﻿@model IMS.Models.Products.ProductMasterModel
+@using IMS.Business
+@{
+    ViewBag.Title = "Product Master";
+}
+<link href="~/AdminLTE-2.4.3/dist/css/alt/AdminLTE-select2.min.css" rel="stylesheet" />
+<link href="~/AdminLTE-2.4.3/bower_components/select2/dist/css/select2.min.css" rel="stylesheet" />
+<script src="~/AdminLTE-2.4.3/bower_components/select2/dist/js/select2.full.min.js"></script>
+<div class="box box-success">
+    <div class="box-header with-border">
+        <h3 class="box-title">Add New Product </h3>
+        <div class="pull-right">
+            <a class="btn btn-primary btn-sm" href="@Url.Action("Index","ProductMaster")">Back To List</a>
+        </div>
+    </div>
+</div>
+
+@using (Ajax.BeginForm("ProductMaster", "ProductMaster", null, new AjaxOptions() { OnSuccess = "Reponse" }, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.HiddenFor(a => a.ProductId)
+    @Html.HiddenFor(a => a.StoreId)
+    @Html.HiddenFor(a => a.hidForward)
+
+    <div class="box box-success">
+        <div class="box-body irs-with-grid">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="cm-strong">Product Name <span class="astrrick">*</span></label>
+                    @Html.TextBoxFor(a => a.ProductName, new { @class = "form-control", id = "ProductName", required = "required" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Category <span class="astrrick">*</span></label>
+                    @Html.DropDownListFor(a => a.CategoryId, Model.BindCategoryDdl, "-Select-", new { @class = "select2", id = "CategoryId", required = "required", @style = "width:100%" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Manufacture <span class="astrrick">*</span></label>
+                    @Html.DropDownListFor(a => a.BrandId, Model.BindBrandDdl, "-Select-", new { @class = "select2", id = "BrandId", required = "required", @style = "width:100%" })
+                </div>
+           </div>
+           <div class="row">
+                <div class="col-md-4">
+                    <label class="cm-strong">Generic Name</label>
+                    @Html.TextBoxFor(a => a.GenericName, new { @class = "form-control", id = "GenericName" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Unit <span class="astrrick">*</span></label>
+                    @Html.DropDownListFor(a => a.UnitId, Model.BindUnitDdl, "-Select-", new { @class = "select2", id = "UnitId", required = "required", @style = "width:100%" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">HSN/SAC Code</label>
+                    @Html.TextBoxFor(a => a.HSNSACCode, new { @class = "form-control", id = "HSNSACCode" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Item/SKU Code</label>
+                    @Html.TextBoxFor(a => a.ItemSkuCode, new { @class = "form-control", id = "ItemSkuCode" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Rack Number</label>
+                    @Html.TextBoxFor(a => a.RackNo, new { @class = "form-control", id = "RackNo" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Reorder Ouantity <span class="astrrick">*</span></label>
+                    @Html.TextBoxFor(a => a.RecorderQuantity, new { @class = "form-control", id = "RecorderQuantity", required = "required" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Sales Price / MRP <span class="astrrick">*</span></label>
+                    @Html.TextBoxFor(a => a.SalesPriceMRP, new { @class = "form-control", id = "SalesPriceMRP", required = "required" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Tax</label>
+                    @Html.DropDownListFor(a => a.TaxId, Model.BindTaxDdl, "-Select-", new { @class = "form-control", id = "TaxId" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Item Type <span class="astrrick">*</span></label>
+                    @Html.DropDownListFor(a => a.ItemType, Model.BindItemTypeDdl, "-Select-", new { @class = "form-control", id = "ProductName", required = "required" })
+                </div>
+
+                @*<div class="col-md-4">
+                <label class="cm-strong">CESS Tax (%)</label>
+                @Html.TextBoxFor(a => a.CessTax, new { @class = "form-control", id = "CessTax" })
+            </div>*@
+
+                <div class="col-md-4">
+
+                    @Html.CheckBoxFor(a => a.CheckIsActive)
+                    <label class="cm-strong">Is Active</label>
+                </div>
+
+                <div class="col-md-4">
+
+                    @Html.CheckBoxFor(a => a.HasBatchNumber)
+                    <label class="cm-strong">Has Batch Number</label>
+                </div>
+
+
+                <div class="col-md-12">
+                    <label class="cm-strong">Description</label>
+                    @Html.TextAreaFor(a => a.Description, new { @class = "form-control", id = "Description" })
+                </div>
+            </div>
+        </div>
+        <div class="box-body irs-with-grid">
+            <div class="row">
+                <div class="col-md-3">@Html.CheckBoxFor(a => a.AddProduct, new { @id = "AddProduct" }) <label class="strong">Add Product</label></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="strong">Attribute </label>
+                    <div>@Html.DropDownListFor(a => a.AttributeId, Model.BindAttributeddl, "-Select-", new { @style = "width: 100%;", @class = "form-control pr", @id = "AttributeId" })</div>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="strong">Attribute Detail</label>
+                    <div class="ddlled">@Html.DropDownListFor(a => a.AttributeDetailId, Model.BindAttributeDetailDdl, "-Select-", new { @style = "width: 100%;", @id = "AttributeDetailId", @class = "form-control pr" })</div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="strong">Attribute Vale</label>
+                    <div class="ddlled">@Html.TextBoxFor(a => a.AtributeValue, new { @id = "AttributeValue", @class = "form-control pr" })</div>
+                </div>
+                <div class="col-md-2">
+                    <div><label class="strong">Action</label></div>
+                    <div class="text-left"><a class="btn btn-primary btn-xs" id="btmAddToGrid"><i class="fa fa-plus"></i> Add</a></div>
+                </div>
+
+
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12" id="tblAttribute"></div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    <div class="clearfix"><br /></div>
+    <div class="box box-footer">
+        <div class="pull-right">
+            <button class="btn btn-success" type="submit" id="btnSubmit">Submit</button>
+            <button class="btn btn-danger" type="reset">Reset</button>
+        </div>
+    </div>
+
+}
+
+
+<script type="text/javascript">
+
+    function Reponse(response) {
+        if (response != null) {
+            var jsonData = $.parseJSON(response);
+            var mess = jsonData.Message;
+            var messType = jsonData.MessageType;
+            if (messType == 1) {
+                $.notify({ message: jsonData.Message }, { type: 'success' });
+                var url = '@Url.Action("Index", "ProductMaster")';
+                window.location.href = url;
+            }
+            else {
+                $.notify({ message: jsonData.Message }, { type: 'warning' });
+            }
+
+        }
+
+    }
+
+
+
+    $("#AddProduct").click(function () {
+        if ($(this).is(":checked")) {
+            $(".pr").removeAttr("disabled");
+        }
+        else {
+            $(".pr").attr("disabled", "disabled");
+            $(".pr").val("");
+            $("#hidForward").val("");
+            ShowHeader();
+        }
+    });
+
+    $("#btnSubmit").click(function () {
+        if ($("#AddProduct").is(":checked")) {
+            var countRows = $("#tblAttribute tr").length;
+            if (countRows == 0) {
+                $.notify({ message:"Please add atleast one product." }, { type: 'warning' });
+                return false;
+            }
+        }
+    });
+
+    //=================================Add========================
+    $(document).ready(function () {
+        $('.select2').select2();
+        ShowHeader();
+        if ($(this).is(":checked")) {
+            $(".pr").removeAttr("disabled");
+        }
+        else {
+            $(".pr").attr("disabled", "disabled");
+            $(".pr").val("");
+        }
+    });
+
+    $("#btmAddToGrid").click(function () {
+        var isCheck = true;
+        var ddlAttributeId = $("#AttributeId").val();
+        var ddlAttributeDetailId = $("#AttributeDetailId").val();
+        var ddlAttributeText = $("#AttributeId option:selected").text();
+        var ddlAttributeDetailText = $("#AttributeDetailId option:selected").text();
+        var AttributeVal = $("#AttributeValue").val();
+
+        if (ddlAttributeId == 0) {
+            ShowMessage(1, "Please select attribute.");
+            return false;
+        }
+
+        if (ddlAttributeDetailId == 0) {
+            ShowMessage(1, "Please select attribute detail.")
+            return false;
+        }
+
+        $('#tblAttribute tr').each(function (index, elem) {
+
+            if ($(this).children().eq(1).text() == ddlAttributeText && $(this).children().eq(3).text() == ddlAttributeDetailText) {
+                ShowMessage(3, "This detail has already entered!");
+                isCheck = false;
+            }
+        });
+
+        if (isCheck == false) { return false; }
+
+        var fAdd = ddlAttributeText + "!";
+        fAdd += ddlAttributeId + "!";
+        fAdd += ddlAttributeDetailText + "!";
+        fAdd += ddlAttributeDetailId + "!";
+        fAdd += AttributeVal + "!";
+        fAdd += "$"
+
+        $("#hidForward").val($("#hidForward").val() + fAdd)
+        ShowHeader();
+        $("#AttributeId").val("");
+        $("#AttributeDetailId").val("");
+        $("#AttributeValue").val("");
+
+    });
+
+    //=================================View========================
+    function ShowHeader() {
+        if ($("#hidForward").val() != '') {
+            var headarr = '';
+            var headerDtl = '';
+            content = '';
+            content += "<table class='table table-bordered table-condensed table-striped table-primary table-vertical-center checkboxs js-table-sortable ui-sortable'>"
+            content += "<thead><tr>"
+            content += "<th style='text-align:Center' width='1%'><B>S.No.</B></th>"
+            content += "<th style='text-align:Center' width='15%'><B>Attribute</B></th>"
+            content += "<th style='text-align:Center;display:none;' width='15%'><B>Attribute Id</B></th>"
+            content += "<th style='text-align:Center' width='15%'><B>Attribute Detail</B></th>"
+            content += "<th style='text-align:Center;;display:none;' width='15%'><B>Attribute Detail Id</B></th>"
+            content += "<th style='text-align:Center;' width='15%'><B>Attribute Value</B></th>"
+            content += "<th style='text-align:Center' width='10%'><B>Actions</B></th>"
+            content += "</tr></thead><tbody>"
+            headarr = $('#hidForward').val().split("$");
+            for (k = 0; k < headarr.length - 1; k++) {
+                headerDtl = headarr[k].split('!')
+                content += "<tr class='targetfields' style='background-color:white;border-style:none'>"
+                content += "<td align='left'>" + eval(k + 1) + "</td>"
+                content += "<td>" + headerDtl[0] + "</td>"
+                content += "<td style='display:none;'>" + headerDtl[1] + "</td>"
+                content += "<td>" + headerDtl[2] + "</td>"
+                content += "<td style='display:none;'>" + headerDtl[3] + "</td>"
+                content += "<td>" + headerDtl[4] + "</td>"
+                content += "<td style='text-align:center' width='10%'>"
+                        + "<a class='btn btn-sm btn-success'id='btnGedit' onclick ='window.EEdit(" + k + ")'> "
+                        + "<i class='fa fa-pencil' align='top'></i></a>&nbsp;<a class='btn btn-sm btn-danger' id='btnGdelete' onclick ='window.DDEL(" + k + ")'><i class='fa fa-times'  align='top' ></i></a> </td>"
+                content += "</tr>"
+            }
+            content += " </tbody></table>"
+            $("#tblAttribute").html(content);
+        }
+        else { $("#tblAttribute").html(''); }
+    }
+
+
+    //=================================Edit========================
+    function EEdit(j) {
+
+        var ddlAttributeDetailId = $("#AttributeDetailId").val();
+        var ddlAttributeId = $("#AttributeId").val();
+        var AttributeValue = $("#AttributeValue").val();
+        if ((ddlAttributeDetailId != "" && ddlAttributeDetailId != null) || ddlAttributeId != "" && ddlAttributeId != null)
+        { return false; }
+
+        var finalVal = '';
+        var editVal
+        var arr_val = $("#hidForward").val().split("$")
+        for (l = 0; l < arr_val.length - 1; l++) {
+            if (l != j) { finalVal = finalVal + arr_val[l] + "$"; }
+            else { editVal = arr_val[l]; }
+        }
+
+        $("#hidForward").val(finalVal);
+        finalVal = editVal.split("!");
+
+        $("#AttributeId").val(finalVal[1]);
+        $("#AttributeDetailId").val(finalVal[3]);
+        $("#AttributeValue").val(finalVal[4]);
+        ShowHeader();
+    }
+
+    //=================================Delete==========================================
+
+    function DDEL(j) {
+
+        var deletVal = "";
+        if (confirm("Are You Sure Want To Delete This Record?")) {
+            var finalVal = "";
+            arr_val = $("#hidForward").val().split("$");
+            for (l = 0; l < arr_val.length - 1; l++) {
+                if (l != j) {
+                    finalVal = finalVal + arr_val[l] + "$";
+                }
+            }
+            $("#hidForward").val(finalVal);
+
+        }
+        ShowHeader();
+    }
+
+</script>

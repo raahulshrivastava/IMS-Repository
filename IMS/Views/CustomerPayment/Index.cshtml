@@ -1,0 +1,138 @@
+﻿
+@{
+    ViewBag.Title = "Customer Payment";
+}
+
+@model IMS.Models.CustomerPayment.CustomerPaymentReportViewModel
+@using IMS.Utilities;
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Customer Payment
+    </h1>
+    <div class="pull-right">
+        <button type="button" class="btn bg-purple" data-toggle="modal" data-target="#pdf-report">
+            <i class="fa fa-file-pdf-o"></i>  Invoice Report
+        </button>
+        <a href="@Url.Action("AddEditCustomerPayment", "CustomerPayment")" class="btn bg-blue " id="btnAdd"><i class="fa fa-plus"></i>  Add</a>
+    </div>
+
+</div>
+<br />
+<!-- Modal -->
+<div class="modal fade" id="pdf-report" tabindex="-1" role="dialog" aria-labelledby="pdf-report" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLongTitle">View Report</h3>
+                <button type="button" class="close  btn" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Report Type</label>
+                    <div class="col-sm-10">
+                        @{
+                            var item = new List<SelectListItem>() {
+                                        new SelectListItem() { Text = "Invoice Detail Report", Value = "0" },
+                                        new SelectListItem() { Text = "Payment Summary Report", Value = "1" }
+                                        };
+                            SelectList lst = new SelectList(item, "Value", "Text");
+                        }
+                        @Html.DropDownListFor(a => a.ReportType, lst, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Customer Name</label>
+                    <div class="col-sm-10">
+                        @Html.DropDownListFor(a => a.CustomerId, Model.CustomerList, "--Select All--", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">From Date</label>
+                    <div class="col-sm-10">
+                        @Html.TextBoxFor(a => a.FromDate, new { @class = "form-control datepicker", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">To Date</label>
+                    <div class="col-sm-10">
+                        @Html.TextBoxFor(a => a.ToDate, new { @class = "form-control datepicker", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-purple" id="viewReport">View</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box box-success">
+    <div class="box-body" id="ClassListing">
+        @{
+            Html.RenderAction("SearchCustomerPayment", "CustomerPayment");
+        }
+    </div>
+
+</div>
+
+<div class="modal fade" id="m-modal" tabindex="-1" role="dialog" aria-labelledby="pdf-report" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-heading"></h3>
+                <button type="button" class="close  btn" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body " id="m-modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    @*$("#btnAdd").click(function (event) {
+        var url = '@Url.Action("AddEditCustomerPayment", "CustomerPayment")';
+        $("#modal-heading").text("Add New Item");
+        $("#m-modal-body").load(url);
+
+    });*@
+
+    function InsertUpdateResponse(response) {
+        var jsonData = $.parseJSON(response);
+        var mess = jsonData.Message;
+        var messType = jsonData.MessageType;
+        if (messType == 1) { $.notify({ message: jsonData.Message }, { type: 'success' }); }
+        else { $.notify({ message: jsonData.Message }, { type: 'warning' }); }
+        var url = '@Url.Action("SearchCustomerPayment", "CustomerPayment")';
+        $("#ClassListing").load(url);
+        $("#m-modal").modal('hide');
+    }
+
+    $("#viewReport").click(function () {
+        if (($("#ReportType").val() == 0) && ($("#CustomerId").val() == "" || $("#CustomerId").val() == null)) {
+            $("#CustomerId").focus();
+            alert("Please Select Supplier Name.");
+            return false;
+        }
+        var customerId = $("#CustomerId").val() || "";
+        var FromDate = $("#FromDate").val() || "";
+        var ToDate = $("#ToDate").val() || "";
+        var customerName = $("#CustomerId option:selected").text() || "";
+        var url = "";
+        if ($("#ReportType").val() == 0) {
+            url = "/CustomerPayment/SaleInvoiceReport?customerId=" + customerId + "&FromDate=" + FromDate + "&ToDate=" + ToDate + "&customerName=" + customerName;
+        }
+        else {
+            if (customerId == "") {
+                customerId = 0;
+            }
+            url = "/CustomerPayment/PaymentSummaryReport?customerId=" + customerId + "&FromDate=" + FromDate + "&ToDate=" + ToDate + "&customerName=" + customerName;
+        }
+        window.open(url, '_blank');
+    });
+</script>
+

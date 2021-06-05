@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "Sales Return";
+}
+
+@using IMS.Utilities;
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Sales Return
+    </h1>
+    <div class="pull-right">
+        <a href="@Url.Action("AddEditSalesReturn", "SalesReturn")" type="button" class="btn bg-blue" id="btnAdd"><i class="fa fa-plus"></i>  Add</a>
+    </div>
+
+    <br />    <br />  <br />
+
+    <div class="box box-success">
+        <div class="box-body" id="ClassListing">
+            @{
+                Html.RenderAction("SearchSalesReturn", "SalesReturn");
+            }
+        </div>
+
+    </div>
+
+</div>

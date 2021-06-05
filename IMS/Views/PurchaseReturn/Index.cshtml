@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewBag.Title = "Purchase Return";
+}
+
+@using IMS.Utilities;
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Purchase Return
+    </h1>
+    <div class="pull-right">
+        <a href="@Url.Action("AddEditPurchaseReturn", "PurchaseReturn")" type="button" class="btn bg-blue" id="btnAdd"><i class="fa fa-plus"></i>  Add</a>
+
+        @*<button type="button" onclick="exported('@((int)Enums.Modules.PurchaseReturn)')" class="btn btn-success">
+            <i class="fa fa-download"></i>
+            Export Excel
+        </button>
+        <button type="button" class="btn bg-olive" data-toggle="modal" data-target="#modal-default">
+            <i class="fa fa-upload"></i>
+            Import Excel
+        </button>*@
+    </div>
+
+</div>
+<br />
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        @using (Html.BeginForm("ImportExcel", "ImportExportDocument", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Import Excel</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Please select file to import </p>   <input type="file" name="file" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        }
+
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="box box-success">
+    <div class="box-body" id="ClassListing">
+        @{
+            Html.RenderAction("Search", "PurchaseReturn");
+        }
+    </div>
+
+</div>
+

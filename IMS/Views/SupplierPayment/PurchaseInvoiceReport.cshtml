@@ -1,0 +1,80 @@
+﻿
+@{
+    ViewBag.Title = "PurchaseInvoiceReport";
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+}
+
+<!-- Widget -->
+<div class="widget">
+    <div class="widget-body innerAll inner-2x overflow-x">
+        <div class="col-table-row">
+            <div class="row">
+                <div class="col-md-12" style="margin-bottom: 10px; font-size: 17px">
+                    @Html.Raw(ViewBag.Searchcriteria)
+                    <br />
+                    <b> Total Payment Amount :  </b> @ViewBag.TotalPaidAmount
+                    <br />
+                    <b> Opening Balance :  </b> @ViewBag.OpeningBalance
+                </div>
+            </div>
+            <!-- Table -->
+            <table class="table export_table" style="border-top: 1px solid #e6e6e6;">
+                <thead class="bg-gray">
+                    <tr>
+                        <th class="center" style="width: 10%;">S.No.</th>
+                        <th class="center" style="width: 10%;">Invoice Number</th>
+                        <th class="center" style="width: 10%;">Invoice Date</th>
+                        <th class="center" style="width: 10%;">Invoice Amount</th>                        
+                        <th class="center" style="width: 10%;">Paid Amount</th>
+                        <th class="center" style="width: 10%;">Due Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int cnt = 1;
+                        int NoRowCnt = 0;
+                        decimal DueAmount = 0;
+                        decimal TotalInvoiceAmount = 0;
+                        decimal TotalPaidAmount = 0;
+                        decimal TotalDueAmount = 0;
+                    }
+                    @if (ViewBag.cnt > 0)
+                    {
+                        foreach (var item in ViewBag.result)
+                        {
+                            DueAmount = Convert.ToDecimal(item["totalamount"]) - Convert.ToDecimal(item["PaidAmount"]);
+                           
+                            TotalInvoiceAmount += item["totalamount"];
+                            TotalPaidAmount += item["PaidAmount"];
+                            TotalDueAmount += DueAmount;
+
+                            <tr class="selectable">
+                                <td class="center">@cnt</td>
+                                <td class="center"><a href="@Url.Action("PurchaseInvoiceReport","PurchaseInvoice",new { id= item["Id"] } )" target="_blank" style="color:blue;"> @item["InvoiceNo"]</a></td>
+                                <td class="center">@Convert.ToDateTime(item["InvoiceDate"]).ToString("dd-MMM-yyyy") </td>
+                                <td class="center">@item["totalamount"]</td>
+                                <td class="center">@item["PaidAmount"]</td>
+                                <td class="center">@DueAmount</td>
+                            </tr>
+                            ++cnt;
+                            ++NoRowCnt;
+                            DueAmount = 0;
+                        }
+                    }
+                    <tr>
+                        <td class="center" style="text-align:right;" colspan="3"><b>Total : </b></td>
+                        <td class="left"><b>@Math.Round(TotalInvoiceAmount, 2)</b></td>
+                        <td class="left"><b>@Math.Round(TotalPaidAmount, 2)</b></td>
+                        <td class="left"><b>@Math.Round(TotalDueAmount, 2)</b></td>                        
+                    </tr>
+                </tbody>
+            </table>
+            @if (NoRowCnt == 0)
+            {
+                <div style="width: 80%; text-align: center; color: red">No Record Found</div>
+            }
+        </div>
+    </div>
+
+</div>
+<!-- // END col-app -->

@@ -1,0 +1,193 @@
+﻿@model IMS.Business.CustomerPaymentModel
+@{
+    ViewBag.Title = "Add Edit Form";
+}
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.bootstrap.js"></script>
+<script src="~/Scripts/bootbox.min.js"></script>
+<script src="~/ClientSideUtility/js/jsUtility.js"></script>
+<link href="~/AdminLTE-2.4.3/dist/css/alt/AdminLTE-select2.min.css" rel="stylesheet" />
+<link href="~/AdminLTE-2.4.3/bower_components/select2/dist/css/select2.min.css" rel="stylesheet" />
+<script src="~/AdminLTE-2.4.3/bower_components/select2/dist/js/select2.full.min.js"></script>
+<div class="box box-success">
+    <div class="box-header with-border">
+        <h3 class="box-title">Customer Payment</h3>
+        <div class="pull-right">
+            <a class="btn btn-primary btn-sm" href="@Url.Action("Index","CustomerPayment")">Back To List</a>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    .astrrick {
+        color: red;
+        font-weight: bolder;
+        font-size: medium;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+</style>
+
+
+@using (Html.BeginForm("AddEditCustomerPayment", "CustomerPayment", FormMethod.Post))
+{
+    @Html.HiddenFor(a => a.Id)
+    @Html.HiddenFor(a => a.hdnTotalDue)
+    @Html.HiddenFor(a => a.hdnTotalPaid)
+
+    <div class="box box-success">
+        <div class="box-body irs-with-grid">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="cm-strong">Payment Date <span class="astrrick">*</span></label>
+                    @{
+                        var dtPaymentDate = Model.Id > 0 ? Model.PaymentDate.ToString("dd-MMM-yyyy") : DateTime.Now.ToString("dd-MMM-yyyy");
+                    }
+                    <input type="text" value="@dtPaymentDate" name="PaymentDate" id="PaymentDate" class="form-control datepicker" required="required" readonly="readonly" />
+                    @*@Html.TextBoxFor(a => a.PaymentDate, new { @class = "form-control datepicker", @readonly = "readonly", required = "required" })*@
+                </div>
+                <div class="col-md-4">
+                    <label class="cm-strong">Customer Name <span class="astrrick">*</span></label>
+                    @Html.DropDownListFor(a => a.CustomerName, Model.BindCustomerList, "-Select-", new { @class = "select2", @style = "width: 100%;", required = "required" })
+                </div>
+                <div class="col-md-4">
+                    <label class="strong">Amount<span class="astrrick">*</span></label>
+                    <div class="ddlled">@Html.TextBoxFor(a => a.PaymentAmount, new { @class = "form-control onlydecimal" })</div>
+                </div>
+                @if (Model.IsPosted == "1")
+                {
+                    <div class="col-md-4">
+                        <b>
+                            Payment Number :
+                        </b>
+                        <label class="strong"> @Model.PaymentNumber </label>
+                    </div>
+                }
+                <div class="col-md-4" style="display:none;">
+                    <label class="cm-strong">Posted</label>
+                    @Html.TextBoxFor(a => a.IsPosted, new { @class = "form-control", @disabled = "disabled" })
+                </div>
+            </div>
+            <div id="divAmountDetail">
+                <br />
+                <div class="row">
+                    <div class="col-md-4">
+                        <b>
+                            Opening Balance :
+                        </b>
+                        <label class="Normal" id="lblOpeningBalance">@Model.OpeningBalance</label>
+                    </div>
+                    <div class="col-md-4">
+                        <b>
+                            Total Due :
+                        </b>
+                        <label class="Normal" id="lblTotalDue">@Model.TotalDue</label>
+                    </div>
+                    <div class="col-md-4">
+                        <b>
+                            Total Paid :
+                        </b>
+                        <label class="Normal" id="lblTotalPaid">@Model.TotalPaid</label>
+                    </div>
+                    <div class="col-md-4">
+                        <b>
+                            Total Remaining :
+                        </b>
+                        <label class="Normal" id="lblTotalRemaining">@Model.TotalRemaining</label>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-8">
+                    <label>Description</label>
+                    @Html.TextAreaFor(a => a.Description, new { @class = "form-control", placeholder = "Enter Description" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+    <div class="box box-footer">
+        @if (Model.IsPosted != "1")
+        {
+            <div class="pull-right">
+                <button class="btn btn-success" type="submit" id="btnSave">Submit</button>
+                <button class="btn btn-danger" type="reset">Reset</button>
+            </div>
+        }
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$(".datepicker").datepicker("option", "dateFormat", "dd-M-yy");
+        //$(".datepicker").datepicker('setDate', 'today');
+        $('.select2').select2();
+        $("#divAmountDetail").hide();
+        //$(".datepicker").datepicker({
+        //    format: "dd-M-yyyy",
+        //    showOtherMonths: false,
+        //    selectOtherMonths: false,
+        //    showButtonPanel: false,
+        //    changeMonth: true,
+        //    changeYear: true,
+        //    gotoCurrent: true,
+        //    autoclose: true,
+        //});
+
+        $(function () {
+            $('.datepicker').datepicker({
+                format: 'dd-M-yyyy',
+                autoclose: true
+            });
+        });
+
+    });
+
+    $("#btnSave").click(function () {
+
+        var PayDate = $("#PaymentDate").val();
+        if (PayDate == "" || PayDate == null) {
+            $("#PaymentDate").focus();
+            $.notify({ message: "Please enter date." }, { type: 'warning' });
+            return false;
+        }
+
+        if ($("#CustomerName").val() == "" || $("#CustomerName").val() == null) {
+            $("#CustomerName").focus();
+            $.notify({ message: "Please Select Customer Name." }, { type: 'warning' });
+            return false;
+        }
+
+    });
+
+    $("#CustomerName").change(function () {
+        $("#divAmountDetail").show();
+        var CustomerName = $(this).val();
+        GetAmountDetail(CustomerName);
+    });
+
+    function GetAmountDetail(pid) {
+        if (pid != "" && pid != 0 && pid != null) {
+            $.ajax({
+                type: 'POST',
+                async: false,
+                type: 'POST',
+                datatype: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: pid }),
+                url: '@Url.Action("GetCustomerDetail", "CustomerPayment")',
+                success: function (data) {
+                    var detail = data.split("!");
+                    $("#lblTotalDue").text(detail[0]);
+                    $("#lblTotalPaid").text(detail[1]);
+                    $("#lblTotalRemaining").text(detail[2]);
+                    $("#lblOpeningBalance").text(detail[3]);
+
+                    $("#hdnTotalDue").val(detail[0]);
+                    $("#hdnTotalPaid").val(detail[1]);
+                },
+                error: function (ex) {
+                }
+            });
+        }
+    }
+</script>

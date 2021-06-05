@@ -1,0 +1,327 @@
+﻿@model IMS.Business.PurchaseReturnModel
+
+@{
+    ViewBag.Title = "Add Edit Purchase Return";
+}
+
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.bootstrap.js"></script>
+<script src="~/Scripts/bootbox.min.js"></script>
+<script src="~/ClientSideUtility/js/jsUtility.js"></script>
+
+
+
+<div class="box box-success">
+    <div class="box-header with-border">
+        <h3 class="box-title">Purchase Return</h3>
+        <div class="pull-right">
+            <a class="btn btn-primary btn-sm" href="@Url.Action("Index","PurchaseReturn")">Back To List</a>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("AddEditPurchaseReturn", "PurchaseReturn", FormMethod.Post))
+{
+    @Html.HiddenFor(a => a.hidTempDetail)
+    @Html.HiddenFor(a => a.PurchaseReturnHeaderId)
+    <div class="box box-success">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="cm-strong">Date <span class="astrrick">*</span></label>
+                    @Html.TextBoxFor(a => a.Date, new { @class = "form-control datepicker", @readonly = "readonly", required = "required" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Return No <span class="astrrick">*</span></label>
+                    @if (Model.PurchaseReturnHeaderId > 0)
+                    {
+                        @Html.TextBoxFor(a => a.ReturnNo, new { @class = "form-control", @readonly = "readonly", required = "required" })
+                    }
+                    else
+                    {
+                        <br /><label class="cm-strong">NA</label>
+                    }
+                </div>
+
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Supplier Name <span class="astrrick">*</span></label>
+                    @Html.DropDownListFor(a => a.SupplierId, Model.SupplierList, "-Select-", new { @class = "form-control ", required = "required" })
+                </div>
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Invoice No <span class="astrrick">*</span></label>
+                    @Html.DropDownListFor(a => a.InvoiceId, Model.InvoiceList, "-Select One-", new { @class = "form-control", required = "required", @id = "InvoiceNo" })
+                </div>
+
+
+                <div class="col-md-4">
+                    <label class="cm-strong">Invoice Date</label>
+                    @Html.TextBoxFor(a => a.InvoiceDate, new { @class = "form-control datepicker", required = "required", @readonly = "readonly" })
+                </div>
+
+            </div>
+            <div class="box-body">
+                <div class="row hidden" id="enterReturnValue" style="border:1px solid red;">
+                    <br />
+                    <ul class="list-group list-inline">
+                        <li></li>
+                        <li><label>Please Enter Return Quantity : </label></li>
+                        <li class=""><input type="text" id="returnValue" class="form-control onlynumber" /></li>
+                        <li><button id="btnRetrunValue" type="button" class="form-control btn btn-default"><i class="fa fa-plus">&nbsp;</i>Save</button></li>
+                        <li><input type="text" id="hiddenSequance" class="form-control hidden" /></li>
+                        <li><input type="text" id="hiddenTotalQty" class="form-control hidden" /></li>
+                    </ul>
+                    <div class="col-md-2">
+
+
+                    </div>
+
+                    <div class="col-md-1"><br /></div>
+                </div>
+                <br />
+                <div class="col-md-12" id="tblPurchaseReturn"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="cm-strong">Return Reason</label>
+                    @Html.DropDownListFor(a => a.ReturnReason, Model.ReturnReasonList, "--Select--", new { @class = "form-control ", required = "required" })
+                </div>
+                <div class="col-md-12">
+                    <label>Description</label>
+                    @Html.TextAreaFor(a => a.Description, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="box box-footer">
+        <div class="pull-right">
+            <button class="btn btn-success" type="submit" id="btnSave">Submit</button>
+            <button class="btn btn-danger" type="reset">Reset</button>
+        </div>
+    </div>
+
+
+}
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".datepicker").datepicker({
+           format: "dd-M-yyyy",
+            showOtherMonths: false,
+            selectOtherMonths: false,
+            showButtonPanel: false,
+            changeMonth: true,
+            changeYear: true,
+            gotoCurrent: true,
+        });
+        ShowHeader();
+
+        var status = '@Model.Status';
+        var statusId = '@Model.StatusId';
+
+        if (status != null && status != "") {
+            if (statusId == 1) {
+                $.notify({ message: status }, { type: 'success' });
+                var url = "@Url.Action("Index", "PurchaseReturn")";
+                window.location.href = url;
+            }
+            else {
+                $.notify({ message: status }, { type: 'warning' });
+            }
+
+        }
+    });
+
+
+    $("#InvoiceNo").change(function () {
+        var invId = $(this).val();
+        if (invId != "" || invId != null) {
+            BindTemporaryGrid(invId);
+        }
+    });
+
+    function BindTemporaryGrid(invId) {
+        $.ajax({
+            type: 'POST',
+            async: false,
+            type: 'POST',
+            datatype: 'application/json',
+            contentType: 'application/json',
+            data: JSON.stringify({ invId: invId }),
+            url: '@Url.Action("BindTempGrid", "PurchaseReturn")',
+            success: function (data) {
+                if (data != null) {
+                    var detail = data;
+                    $("#hidTempDetail").val(detail);
+                    ShowHeader();
+                }
+            },
+            error: function (ex) {
+            }
+        });
+    }
+
+
+
+    function ShowHeader() {
+        if ($("#hidTempDetail").val() != '') {
+            var headarr = '';
+            var headerDtl = '';
+            content = '';
+            content += "<table class='table table-bordered table-condensed table-striped table-primary table-vertical-center checkboxs js-table-sortable ui-sortable'>"
+            content += "<thead><tr>"
+            content += "<th style='text-align:Center;' width='1%' ><B>#</B></th>"
+            content += "<th style='text-align:Center;' width='10%'><B>Product Name</B></th>"
+            if ('@Model.ShowHideBatchExpiry' == "True")
+            {
+               content += "<th style='text-align:Center;' width='10%'><B>Batch No</B></th>"
+               content += "<th style='text-align:Center;' width='10%'><B>Expiry Date</B></th>"
+            }
+
+            content += "<th style='text-align:Center;' width='10%'><B>Quantity</B></th>"
+            content += "<th style='text-align:Center;' width='10%'><B>Free Quantity</B></th>"
+            content += "<th style='text-align:Center;' width='15%'><B>Total Quantity</B></th>"
+            content += "<th style='text-align:Center;display:none;' width='15%'><B>Product Id</B></th>"
+            content += "<th style='text-align:Center;display:none;' width='15%'><B>DetailId</B></th>"
+            content += "<th style='text-align:Center;' width='15%'><B>Already Return</B></th>"
+            content += "<th style='text-align:Center;' width='15%'><B>Return Quantity</B></th>"
+            content += "<th style='text-align:Center;' width='15%'><B>Action</B></th>"
+            content += "</tr></thead><tbody>"
+            headarr = $('#hidTempDetail').val().split("$");
+            for (k = 0; k < headarr.length - 1; k++) {
+
+                headerDtl = headarr[k].split('!')
+                content += "<tr class='targetfields' style='background-color:white;border-style:none'>"
+                content += "<td align='left'>" + eval(k + 1) + "</td>"
+                content += "<td>" + headerDtl[0] + "</td>"
+                if ('@Model.ShowHideBatchExpiry' == "True")
+                {
+                    content += "<td>" + headerDtl[1] + "</td>"
+                    content += "<td>" + headerDtl[2] + "</td>"
+                }
+
+                content += "<td style='text-align:Center;'>" + headerDtl[3] + "</td>"
+                content += "<td style='text-align:Center;'>" + headerDtl[4] + "</td>"
+                content += "<td style='text-align:Center;'>" + headerDtl[5] + "</td>"
+                content += "<td style='text-align:Center;display:none'>" + headerDtl[6] + "</td>"
+                content += "<td style='text-align:Center;display:none;'>" + headerDtl[7] + "</td>"
+                content += "<td style='text-align:Center;'>" + headerDtl[8] + "</td>"
+                content += "<td style='text-align:Center;'>" + headerDtl[9] + "</td>"
+                content += "<td style='text-align:center' width='10%'><a class='btn btn-xs btn-success edit' id='btnGedit' onclick ='window.EEdit(" + k + "," + headerDtl[7] + ")'> <i class='fa fa-pencil' align='top'></i></a>"
+                content += "</tr>"
+            }
+            content += " </tbody></table>"
+            $("#tblPurchaseReturn").html(content);
+        }
+        else {
+            $("#tblPurchaseReturn").html('');
+        }
+    }
+
+
+    //=================================Edit========================
+
+
+    function EEdit(j, detailId) {
+        debugger;
+        var id = j + 1;
+        $("#enterReturnValue").removeClass('hidden');
+        $("#hiddenSequance").val(id);
+        $("#tblPurchaseReturn tr").each(function () {
+            console.log($(this).children());
+            var eq = $(this).children().eq(0).text();    //eq = 0
+            if (id == eq) {
+                $.ajax({
+                    type: 'POST',
+                    async: false,
+                    type: 'POST',
+                    datatype: 'application/json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ detailId: detailId }),
+                    url: '@Url.Action("GetTotalQuantity", "PurchaseReturn")',
+                    success: function (data) {
+                        if (data != null) {
+                            var detail = data;
+                            $("#hiddenTotalQty").val(detail);
+                        }
+                    },
+                    error: function (ex) {
+                    }
+                });
+            }
+
+        });
+    }
+
+    $("#btnRetrunValue").click(function () {
+        debugger;
+        var returnValue = $("#returnValue").val();
+        var totalQuantity = $("#hiddenTotalQty").val();
+        var sequence = $("#hiddenSequance").val();
+        if (returnValue == "" || returnValue == " " || returnValue == null) {
+            $.notify({ message: "Please enter return quantity!" }, { type: 'warning' });
+            return false;
+        }
+        else if (parseInt(returnValue) > parseInt(totalQuantity)) {
+            $.notify({ message: "Return qunatity cannot be greater then total quantity!" }, { type: 'warning' });
+            return false;
+        }
+        else {
+            var finalVal = '';
+            var editVal;
+            var arr_val = $("#hidTempDetail").val().split("$")
+            for (l = 0; l < arr_val.length - 1; l++) {
+                if (l != (sequence - 1)) {
+                    finalVal = finalVal + arr_val[l] + "$";
+                }
+                else {
+                    editVal = arr_val[l];
+                    var colValues = editVal.split("!");
+                    colValues[9] = returnValue;
+                    editVal = colValues[0] + "!";
+                    editVal += colValues[1] + "!";
+                    editVal += colValues[2] + "!";
+                    editVal += colValues[3] + "!";
+                    editVal += colValues[4] + "!";
+                    editVal += colValues[5] + "!";
+                    editVal += colValues[6] + "!";
+                    editVal += colValues[7] + "!";
+                    editVal += colValues[8] + "!";
+                    editVal += colValues[9] + "!";
+                    editVal += "$";
+                    finalVal = finalVal + editVal;
+                    $("#hidTempDetail").val(finalVal);
+                    ShowHeader();
+                    $("#hiddenTotalQty").val("");
+                    $("#hiddenSequance").val("");
+                    $("#returnValue").val("");
+                    $("#enterReturnValue").addClass('hidden');
+                }
+            }
+            
+        }
+
+
+    });
+
+    $("#btnSave").click(function () {
+        var i = 0;
+        $("#tblPurchaseReturn tr").each(function () {
+            var returnQuantity = $(this).children().eq(7).text();
+            if (returnQuantity == "" || returnQuantity == " " || returnQuantity==null) {
+                $.notify({ message: "Please enter return quantity!" }, { type: 'warning' });
+                i++;
+            }
+        });
+        if (i > 0) { return false;}
+    });
+</script>
